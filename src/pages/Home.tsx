@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navigation from "@/components/Navigation";
+import API from "../services/api";
 
 const destinations = [
   { name: "Japan", flag: "🇯🇵", cost: "$1800", icon: "🗻", image: "/assets/destination1.jpg" },
@@ -24,6 +26,12 @@ const testimonials = [
 
 const Home = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    API.get("/test/ping")
+      .then((res) => console.log(res.data))
+      .catch((err) => console.error("Error:", err));
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] text-white font-sans">
@@ -179,6 +187,10 @@ const Home = () => {
           &copy; {new Date().getFullYear()} WanderNest. All rights reserved.
         </div>
       </footer>
+      <div className="text-white text-center mt-10">
+        <h1 className="text-3xl">🌍 WanderNest Home</h1>
+        <p className="text-lg mt-4">Frontend is connected to Backend!</p>
+      </div>
     </div>
   );
 };
