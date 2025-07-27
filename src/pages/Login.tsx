@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import API from '../services/api';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,11 +18,19 @@ const Login = () => {
     // Handle login logic here
     console.log('Login:', { email, password });
     setIsLoggedIn(true); // Update login status on submit
+
+    // Example API usage:
+    API.post('/login', { email, password })
+      .then((res) => {
+        console.log('Logged in:', res.data);
+        setIsLoggedIn(true);
+      })
+      .catch((err) => console.error(err));
   };
 
   const handleDemoLogin = () => {
-    setEmail("demo@wandernest.com");
-    setPassword("demo1234");
+    setEmail('demo@wandernest.com');
+    setPassword('demo1234');
     // Optionally, auto-submit or show a toast
   };
 

@@ -30,11 +30,20 @@ d:\GitHub\WanderNest
 │   │   └── hero-world-map.jpg
 │   ├── App.tsx
 │   └── main.tsx
+├── server
+│   ├── models
+│   ├── controllers
+│   ├── routes
+│   ├── middleware
+│   ├── .env
+│   └── server.js
 ├── package.json
 ├── tsconfig.json
 ├── tailwind.config.js
 └── ...other config files
 ```
+
+> The backend uses MongoDB Atlas and connects with Mongoose in `server/server.js`.
 
 ## How to run locally
 
@@ -51,7 +60,21 @@ d:\GitHub\WanderNest
    ```sh
    npm install framer-motion
    ```
-4. Start the development server:
+4. **Install Axios for API requests:**
+   ```sh
+   npm install axios
+   ```
+5. Start the development server:
    ```sh
    npm run dev
    ```
+
+## Troubleshooting
+
+If you see an error like  
+`Failed to resolve import "axios" from "src/services/api.ts"`  
+run the following command in your project root to install axios:
+
+```sh
+npm install axios
+```

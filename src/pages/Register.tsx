@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import API from '../services/api';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,9 +26,17 @@ const Register = () => {
     e.preventDefault();
     // Handle registration logic here
     console.log('Register:', formData);
-    setRegistrationSuccess(true);
-    // Optionally, show animated welcome (WanderBot handshake or bird flying)
-    // Example: set a state and show animation component
+
+    API.post("/register", {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    })
+      .then((res) => {
+        console.log("Registered:", res.data);
+        setRegistrationSuccess(true);
+      })
+      .catch((err) => console.error(err));
   };
 
   const handleDemoRegister = () => {
