@@ -1,41 +1,41 @@
-# Welcome to your Lovable project
+# WanderNest
 
-## Project info
+## Project Info
 
-**URL**: https://lovable.dev/projects/f84cffa2-ed7f-4c3e-9e38-51024c34c2d4
+WanderNest is your ultimate travel companion for international trips. Plan itineraries, get visa guidance, find vegetarian food, and manage budgets—all in one place.
 
-## How can I edit this code?
+## How to run locally
 
-There are several ways of editing your application.
+1. Clone the repository:
+   ```sh
+   git clone <YOUR_GIT_URL>
+   cd <YOUR_PROJECT_NAME>
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Start the development server:
+   ```sh
+   npm run dev
+   ```
 
-**Use Lovable**
+## Technologies
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f84cffa2-ed7f-4c3e-9e38-51024c34c2d4) and start prompting.
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-Changes made via Lovable will be committed automatically to this repo.
+## Deployment
 
-**Use your preferred IDE**
+You can deploy WanderNest using your preferred platform (Vercel, Netlify, etc).  
+For custom domains, refer to your deployment provider's documentation.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Customization
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
+Feel free to personalize WanderNest to match your travel style!
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).
