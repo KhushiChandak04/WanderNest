@@ -15,7 +15,11 @@ WanderNest is your ultimate travel companion for international trips. Plan itine
    ```sh
    npm install
    ```
-3. Start the development server:
+3. Install Framer Motion for animations:
+   ```sh
+   npm install framer-motion
+   ```
+4. Start the development server:
    ```sh
    npm run dev
    ```
@@ -27,6 +31,7 @@ WanderNest is your ultimate travel companion for international trips. Plan itine
 - React
 - shadcn-ui
 - Tailwind CSS
+- Framer Motion
 
 ## Deployment
 

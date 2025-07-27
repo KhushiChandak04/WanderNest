@@ -1,112 +1,72 @@
 import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, MapPin, Calendar, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Calendar, MapPin, Users, DollarSign } from 'lucide-react';
+
+const steps = [
+  { label: "Dates", icon: <Calendar /> },
+  { label: "Destination", icon: <MapPin /> },
+  { label: "Budget", icon: <DollarSign /> },
+  { label: "Notes", icon: <Users /> },
+];
 
 const PlanTrip = () => {
+  const [step, setStep] = useState(0);
+  const [budget, setBudget] = useState(2000);
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] text-white font-sans">
       <Navigation />
-      
-      <div className="pt-16">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-primary/10 to-accent/10 py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-playfair font-bold text-foreground mb-4">
-              Plan Your Perfect Trip
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Create detailed itineraries, manage budgets, and organize every aspect of your travel
-            </p>
-          </div>
+      <div className="container mx-auto px-4 pt-24">
+        <h1 className="text-4xl font-bold mb-6 drop-shadow-lg text-center">Plan Your Trip</h1>
+        <div className="flex justify-center gap-4 mb-8">
+          {steps.map((s, idx) => (
+            <div key={s.label} className={`flex flex-col items-center ${step === idx ? "text-primary" : "text-gray-400"}`}>
+              {s.icon}
+              <span className="mt-2">{s.label}</span>
+            </div>
+          ))}
         </div>
-
-        {/* Main Content */}
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Create New Trip Card */}
-            <Card className="feature-card border-dashed border-2 border-primary/30 hover:border-primary/50">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                  <Plus className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4">Create New Trip</h3>
-                <p className="text-muted-foreground mb-6">
-                  Start planning your next adventure with our smart trip planner
-                </p>
-                <Button className="cta-button w-full">
-                  Start Planning
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Sample Trip Cards */}
-            <Card className="feature-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    Europe Adventure
-                  </CardTitle>
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                    In Progress
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    June 15 - July 2, 2024
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    2 Travelers
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    Paris, Rome, Barcelona
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full mt-4">
-                  Continue Planning
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="feature-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-accent" />
-                    Asian Exploration
-                  </CardTitle>
-                  <span className="text-xs bg-success/10 text-success px-2 py-1 rounded-full">
-                    Completed
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    March 10 - March 25, 2024
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    4 Travelers
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    Tokyo, Seoul, Bangkok
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full mt-4">
-                  View Details
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+        <div className="max-w-lg mx-auto bg-[#232526]/80 rounded-2xl p-8 glassmorphism shadow-xl">
+          {step === 0 && (
+            <div>
+              <label className="block mb-2 font-semibold">Select Dates</label>
+              <input type="date" className="w-full p-3 rounded-lg bg-[#232526] text-white border border-[#e94560]/40 mb-4" />
+              <button className="cta-button w-full" onClick={() => setStep(1)}>Next</button>
+            </div>
+          )}
+          {step === 1 && (
+            <div>
+              <label className="block mb-2 font-semibold">Destination</label>
+              <input type="text" placeholder="Enter destination" className="w-full p-3 rounded-lg bg-[#232526] text-white border border-[#e94560]/40 mb-4" />
+              <div className="bg-[#1fd1f9]/10 rounded-lg h-40 flex items-center justify-center mb-4">
+                {/* Map Placeholder */}
+                <span className="text-primary">[Map will appear here]</span>
+              </div>
+              <button className="cta-button w-full" onClick={() => setStep(2)}>Next</button>
+            </div>
+          )}
+          {step === 2 && (
+            <div>
+              <label className="block mb-2 font-semibold">Budget</label>
+              <input
+                type="range"
+                min={500}
+                max={10000}
+                value={budget}
+                onChange={e => setBudget(Number(e.target.value))}
+                className="w-full"
+              />
+              <div className="text-center mt-2 text-lg font-bold text-primary">${budget}</div>
+              <button className="cta-button w-full mt-4" onClick={() => setStep(3)}>Next</button>
+            </div>
+          )}
+          {step === 3 && (
+            <div>
+              <label className="block mb-2 font-semibold">Notes</label>
+              <textarea className="w-full p-3 rounded-lg bg-[#232526] text-white border border-[#e94560]/40 mb-4" rows={4} placeholder="Add notes..." />
+              <button className="cta-button w-full" onClick={() => setStep(0)}>Finish & Start Over</button>
+            </div>
+          )}
         </div>
       </div>
     </div>

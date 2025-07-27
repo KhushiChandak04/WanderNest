@@ -15,6 +15,7 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -24,10 +25,23 @@ const Register = () => {
     e.preventDefault();
     // Handle registration logic here
     console.log('Register:', formData);
+    setRegistrationSuccess(true);
+    // Optionally, show animated welcome (WanderBot handshake or bird flying)
+    // Example: set a state and show animation component
+  };
+
+  const handleDemoRegister = () => {
+    setFormData({
+      name: "Demo User",
+      email: "demo@wandernest.com",
+      password: "demo1234",
+      confirmPassword: "demo1234"
+    });
+    // Optionally, auto-submit or show a toast
   };
 
   return (
-    <div className="min-h-screen gradient-hero flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#232526] via-[#414345] to-[#0f2027] flex items-center justify-center p-4 relative overflow-hidden text-white font-playfair">
       {/* Animated Background Elements */}
       <div className="absolute top-16 right-20 opacity-20 animate-float" style={{ animationDelay: '1s' }}>
         <Plane className="h-20 w-20 text-white rotate-12" />
@@ -37,7 +51,7 @@ const Register = () => {
       </div>
 
       {/* Register Card */}
-      <Card className="glassmorphism w-full max-w-md animate-fade-in">
+      <Card className="glassmorphism w-full max-w-md animate-fade-in bg-[#232526]/80 border-none shadow-2xl">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
             <Plane className="h-8 w-8 text-primary mr-2" />
@@ -143,8 +157,11 @@ const Register = () => {
               </span>
             </div>
 
-            <Button type="submit" className="w-full cta-button">
+            <Button type="submit" className="w-full bg-gradient-to-r from-[#1fd1f9] to-[#b621fe] text-white font-bold shadow-lg hover:scale-105 transition-transform">
               Create Account
+            </Button>
+            <Button type="button" onClick={handleDemoRegister} className="w-full mt-2 bg-gradient-to-r from-[#ff512f] to-[#dd2476] text-white font-bold shadow-lg hover:scale-105 transition-transform">
+              Demo Register
             </Button>
 
             <div className="text-center">
@@ -154,6 +171,17 @@ const Register = () => {
               </Link>
             </div>
           </form>
+
+          {/* Success Message / Animation Placeholder */}
+          {registrationSuccess && (
+            <div className="mt-4 text-center">
+              <p className="text-green-400 font-semibold">
+                Registration successful! Welcome to WanderNest.
+              </p>
+              {/* Placeholder for animated welcome (e.g., WanderBot handshake) */}
+              {/* <WanderBotAnimation className="mx-auto mt-2" /> */}
+            </div>
+          )}
         </CardContent>
       </Card>
 
