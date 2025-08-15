@@ -1,42 +1,41 @@
 // server.js
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import { connectDB, dbHealth } from "./config/db.js";
 
-const express = require('express');
-const mongoose = require('mongoose');
-require('dotenv').config();
+// Load environment variables
+dotenv.config();
+
+// Connect to MongoDB
+await connectDB();
 
 const app = express();
+
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-// MongoDB Atlas connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch((err) => console.error('❌ MongoDB connection error:', err));
-
-const Test = require('./models/Test');
-
-// Routes
-app.get('/', (req, res) => {
-  res.send('WanderNest backend is running!');
+// Health check routes
+app.get("/healthz", (_req, res) => {
+  res.json({ status: "ok", uptime: process.uptime() });
 });
 
-app.get('/api', (req, res) => {
-  res.send('🌍 Welcome to WanderNest API');
-});
-
-app.post('/api/test', async (req, res) => {
-  try {
-    const { name } = req.body;
-    const newTest = new Test({ name });
-    await newTest.save();
-    res.status(201).json({ message: '✅ Test entry added', data: newTest });
-  } catch (error) {
-    res.status(500).json({ error: '❌ Failed to add test entry' });
+app.get("/dbping", async (_req, res) => {
+  const result = await dbHealth();
+  if (result.ok) {
+    return res.json({ mongo: "ok" });
   }
+  return res.status(500).json({ mongo: "down", error: result.error });
 });
 
-// Port
-const PORT = process.env.PORT || 5000;
+// Sample API Route
+app.get("/", (_req, res) => {
+  res.send("WanderNest API is running…");
+});
 
+// Start server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
