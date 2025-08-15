@@ -78,3 +78,13 @@ run the following command in your project root to install axios:
 ```sh
 npm install axios
 ```
+
+## Security Note
+
+**Never commit your `.env` file to version control.**  
+Your `.env` contains sensitive credentials (like your MongoDB password).  
+If it was committed, follow these steps:
+1. Add `.env` to `.gitignore`.
+2. Remove it from git history (`git rm --cached server/.env` and commit).
+3. Change your database password immediately.
+4. (Optional) Use `git-filter-repo` to remove `.env` from all past commits.
