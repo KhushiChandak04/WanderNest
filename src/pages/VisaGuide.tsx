@@ -1,84 +1,64 @@
-import React, { useState } from "react";
-import Navigation from "@/components/Navigation";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Globe, Stamp, Building2 } from "lucide-react";
+import { useState } from "react";
+import axios from "axios";
 
-const countries = [
-  { name: "Japan", code: "JP" },
-  { name: "Italy", code: "IT" },
-  { name: "India", code: "IN" },
-  { name: "France", code: "FR" },
-];
+export default function VisaGuide() {
+  const [country, setCountry] = useState("");
+  const [info, setInfo] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-const visaData: Record<string, any> = {
-  JP: {
-    requirements: ["Passport", "Visa Application", "Photo", "Flight Tickets"],
-    time: "5-10 days",
-    embassy: "https://www.jp.embassy.gov/",
-  },
-  IT: {
-    requirements: ["Passport", "Visa Form", "Hotel Booking"],
-    time: "7-14 days",
-    embassy: "https://www.it.embassy.gov/",
-  },
-  // ...other countries
-};
+  const handleSearch = async () => {
+    if (!country.trim()) return;
+    setLoading(true);
+    setError("");
+    setInfo(null);
 
-const VisaGuide = () => {
-  const [selected, setSelected] = useState("JP");
+    try {
+      const res = await axios.get(`http://localhost:5000/api/visa/name/${country}`);
+      setInfo(res.data);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] text-white font-sans transition-all duration-500">
-      <Navigation />
-      <div className="container mx-auto px-4 pt-24">
-        <h1 className="text-4xl font-bold mb-6 drop-shadow-lg text-center">Visa Guide</h1>
-        <div className="max-w-md mx-auto mb-8">
-          <label className="block mb-2 text-lg font-semibold">Select Country</label>
-          <select
-            className="w-full p-3 rounded-lg bg-[#232526] text-white border border-[#e94560]/40"
-            value={selected}
-            onChange={e => setSelected(e.target.value)}
-          >
-            {countries.map(c => (
-              <option key={c.code} value={c.code}>{c.name}</option>
-            ))}
-          </select>
-        </div>
-        <Accordion type="single" collapsible className="max-w-xl mx-auto">
-          <AccordionItem value="requirements">
-            <AccordionTrigger>
-              <Globe className="inline mr-2" /> Requirements
-            </AccordionTrigger>
-            <AccordionContent>
-              <ul className="list-disc pl-6">
-                {visaData[selected]?.requirements.map((req: string) => (
-                  <li key={req}>{req}</li>
-                ))}
-              </ul>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="time">
-            <AccordionTrigger>
-              <Stamp className="inline mr-2" /> Estimated Time
-            </AccordionTrigger>
-            <AccordionContent>
-              <span>{visaData[selected]?.time}</span>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="embassy">
-            <AccordionTrigger>
-              <Building2 className="inline mr-2" /> Embassy Link
-            </AccordionTrigger>
-            <AccordionContent>
-              <a href={visaData[selected]?.embassy} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-                Visit Embassy Website
-              </a>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex flex-col items-center p-6">
+      <h1 className="text-4xl font-bold text-blue-900 mb-6">🌏 Visa & Country Guide</h1>
+
+      <div className="flex w-full max-w-md mb-6">
+        <input
+          type="text"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          placeholder="Enter country name"
+          className="flex-1 border-2 border-blue-300 rounded-l-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 text-white px-6 rounded-r-lg hover:bg-blue-600 transition-colors"
+        >
+          Search
+        </button>
       </div>
+
+      {loading && <p className="text-blue-700 font-medium">Loading...</p>}
+      {error && <p className="text-red-600 font-medium">{error}</p>}
+
+      {info && (
+        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md animate-fade-in">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-blue-900">{info.name.common}</h2>
+            <img src={info.flags.png} alt="flag" className="w-16 h-auto rounded-md border" />
+          </div>
+          <p className="mt-3 text-gray-700"><strong>Capital:</strong> {info.capital}</p>
+          <p className="text-gray-700"><strong>Population:</strong> {info.population.toLocaleString()}</p>
+          <p className="text-gray-700"><strong>Region:</strong> {info.region}</p>
+          <p className="text-gray-700"><strong>CCA3 Code:</strong> {info.cca3}</p>
+        </div>
+      )}
     </div>
   );
-};
-
-export default VisaGuide;
+}
+import "tailwindcss/tailwind.css"; // Ensure Tailwind CSS is imported

@@ -1,22 +1,26 @@
-// server/config/db.js
+// config/db.js
 import mongoose from "mongoose";
 
+let isConnected = false;
+
+// Connect to MongoDB
 export const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useUnifiedTopology: true
     });
-
-    console.log(`✅ MongoDB connected → host: ${conn.connection.host} db: ${conn.connection.name}`);
-  } catch (err) {
-    console.error(`❌ MongoDB connection error: ${err.message}`);
+    isConnected = true;
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`❌ MongoDB connection error: ${error.message}`);
     process.exit(1);
   }
 };
 
+// DB Health Check
 export const dbHealth = () => {
-  const state = mongoose.connection.readyState;
+  const state = mongoose.connection.readyState; // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
   const states = ["Disconnected", "Connected", "Connecting", "Disconnecting"];
-  return { status: states[state] || "Unknown" };
+  return { status: states[state] || "Unknown" }; // ✅ inside a function now
 };
