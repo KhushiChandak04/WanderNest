@@ -10,6 +10,9 @@ import PlanTrip from "./pages/PlanTrip";
 import NotFound from "./pages/NotFound";
 import VisaGuide from "./pages/VisaGuide";
 import FoodFinder from "./pages/FoodFinder";
+import Navbar from "./pages/Navbar";
+import Footer from "./pages/Footer";
+
 
 const queryClient = new QueryClient();
 
@@ -20,6 +23,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+      <Navbar/>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -30,6 +34,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+    <Footer/>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
