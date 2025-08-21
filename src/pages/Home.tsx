@@ -1,126 +1,358 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import Navigation from "@/components/Navigation";
-import API from "../services/api";
+import Navbar from "./Navbar";
+import bgImage from "../assets/bg.jpg";
+
+// Mock API for demo purposes
+const API = {
+  get: (url) => Promise.resolve({ data: "Connected successfully!" })
+};
 
 const destinations = [
-  { name: "Japan", flag: "🇯🇵", cost: "$1800", icon: "🗻", image: "/assets/destination1.jpg" },
-  { name: "Italy", flag: "🇮🇹", cost: "$2200", icon: "🍕", image: "/assets/destination2.jpg" },
-  { name: "India", flag: "🇮🇳", cost: "$1200", icon: "🕌", image: "/assets/destination3.jpg" },
-  { name: "France", flag: "🇫🇷", cost: "$2000", icon: "🗼", image: "/assets/destination4.jpg" },
+  { name: "Japan", flag: "🇯🇵", cost: "$1800", icon: "🗻", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&h=300&fit=crop" },
+  { name: "Italy", flag: "🇮🇹", cost: "$2200", icon: "🍕", image: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=300&fit=crop" },
+  { name: "India", flag: "🇮🇳", cost: "$1200", icon: "🕌", image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&h=300&fit=crop" },
+  { name: "France", flag: "🇫🇷", cost: "$2000", icon: "🗼", image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=300&fit=crop" },
+  { name: "Bali", flag: "🇮🇩", cost: "$1500", icon: "🏝️", image: "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400&h=300&fit=crop" },
+  { name: "Norway", flag: "🇳🇴", cost: "$2500", icon: "🏔️", image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop" }
 ];
 
 const whyCards = [
-  { icon: "🛂", title: "Visa Help", desc: "Country-wise visa guidance" },
-  { icon: "🥗", title: "Veg Food", desc: "Find vegetarian restaurants" },
-  { icon: "🗺️", title: "Local Guide", desc: "Explore with local tips" },
-  { icon: "💸", title: "Budget Tools", desc: "Smart budget planner" },
+  { icon: "🛂", title: "Visa Assistance", desc: "Complete visa guidance with document checklist and application support" },
+  { icon: "🥗", title: "Dietary Preferences", desc: "Find restaurants matching your dietary needs - vegan, halal, kosher & more" },
+  { icon: "🗺️", title: "Local Insights", desc: "Authentic recommendations from locals and expert travel guides" },
+  { icon: "💸", title: "Smart Budgeting", desc: "AI-powered budget planner with real-time expense tracking" },
+  { icon: "🏨", title: "Curated Stays", desc: "Hand-picked accommodations from luxury resorts to cozy homestays" },
+  { icon: "🎯", title: "Custom Itineraries", desc: "Personalized travel plans based on your interests and preferences" }
 ];
 
 const testimonials = [
-  { name: "Amit", avatar: "/assets/user1.jpg", text: "WanderNest made my Europe trip effortless!" },
-  { name: "Sara", avatar: "/assets/user2.jpg", text: "Loved the food finder for vegan options." },
-  { name: "Luca", avatar: "/assets/user3.jpg", text: "Visa guide saved me hours of research." },
+  { 
+    name: "Amit Sharma", 
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+    text: "WanderNest transformed my chaotic Europe trip into a seamless adventure. The visa guidance alone saved me weeks of stress!",
+    location: "Mumbai, India",
+    rating: 5
+  },
+  { 
+    name: "Sara Johnson", 
+    avatar: "https://images.unsplash.com/photo-1494790108755-2616c96729e4?w=100&h=100&fit=crop&crop=face",
+    text: "As a vegan traveler, finding good food was always a challenge. WanderNest's food finder is a game-changer!",
+    location: "New York, USA",
+    rating: 5
+  },
+  { 
+    name: "Luca Rossi", 
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+    text: "The local insights feature helped me discover hidden gems in Tokyo that no guidebook mentioned. Incredible experience!",
+    location: "Milan, Italy",
+    rating: 5
+  },
+  { 
+    name: "Priya Patel", 
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+    text: "Budget planning was so easy with WanderNest. I saved 30% on my Southeast Asia trip compared to traditional planning!",
+    location: "London, UK",
+    rating: 5
+  }
+];
+
+const stats = [
+  { number: "50K+", label: "Happy Travelers", icon: "✈️" },
+  { number: "120+", label: "Countries Covered", icon: "🌍" },
+  { number: "1M+", label: "Trips Planned", icon: "📋" },
+  { number: "98%", label: "Success Rate", icon: "⭐" }
+];
+
+const features = [
+  {
+    icon: "🤖",
+    title: "AI-Powered Planning",
+    description: "Our advanced AI analyzes millions of data points to create the perfect itinerary tailored to your preferences, budget, and travel style."
+  },
+  {
+    icon: "🌐",
+    title: "Real-Time Updates",
+    description: "Stay informed with live updates on weather, local events, flight changes, and safety alerts throughout your journey."
+  },
+  {
+    icon: "💎",
+    title: "Premium Partnerships",
+    description: "Exclusive deals with top airlines, hotels, and local experiences. Get VIP treatment and insider access to unique adventures."
+  },
+  {
+    icon: "🔒",
+    title: "Secure & Private",
+    description: "Your data is protected with bank-level encryption. We never share your personal information with third parties."
+  }
 ];
 
 const Home = () => {
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const navigate = useNavigate();
 
   useEffect(() => {
     API.get("/test/ping")
       .then((res) => console.log(res.data))
       .catch((err) => console.error("Error:", err));
+
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] text-white font-sans">
-      <Navigation />
+    <div
+      className="min-h-screen text-white overflow-x-hidden relative"
+      style={{
+        backgroundImage: `linear-gradient(rgba(26,26,46,0.85), rgba(26,26,46,0.85)), url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
+        backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+        fontFamily: `'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif`
+      }}
+    >
+      <Navbar />
+      <div style={{ height: "30px" }} />
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center min-h-[90vh] overflow-hidden">
-        <img src="/assets/hero-world-map.jpg" alt="World Map" className="absolute inset-0 w-full h-full object-cover opacity-30 z-0" />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e]/80 via-[#16213e]/80 to-[#0f3460]/80 z-0"></div>
+      <section id="home" className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
+        <motion.div 
+          style={{ y }}
+          className="absolute inset-0 w-full h-full"
+        >
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop')] bg-cover bg-center opacity-20"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e]/90 via-[#16213e]/85 to-[#0f3460]/90"></div>
+        </motion.div>
+        
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="relative z-10 flex flex-col items-center justify-center pt-32"
+          className="relative z-10 flex flex-col items-center justify-center text-center px-4 max-w-6xl"
         >
-          <motion.h1
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="mb-6"
+          >
+            <br></br>
+            <span className="inline-block bg-gradient-to-r from-[#e94560] to-[#f8b400] text-transparent bg-clip-text text-lg font-semibold mb-4">
+              ✨ Your Journey Begins Here
+            </span>
+            <h1 className="text-4xl md:text-7xl font-extrabold mb-6 leading-tight">
+              Explore the World,<br />
+              <span className="bg-gradient-to-r from-[#1fd1f9] via-[#b621fe] to-[#e94560] text-transparent bg-clip-text">
+                One Nest at a Time
+              </span>
+              <span className="ml-4">🌌</span>
+            </h1>
+          </motion.div>
+          
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-5xl md:text-6xl font-extrabold mb-6 text-white drop-shadow-xl text-center"
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="text-xl md:text-2xl text-gray-300 max-w-3xl mb-4 font-light leading-relaxed"
           >
-            Explore the World, One Nest at a Time <span role="img" aria-label="galaxy">🌌</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="mb-10 text-xl md:text-2xl text-gray-300 max-w-2xl text-center font-medium"
-          >
-            Plan, discover, and experience premium travel with futuristic style.
+            Discover extraordinary destinations with intelligent planning, local insights, and seamless experiences. 
+            From visa assistance to hidden gems, we make every journey unforgettable.
           </motion.p>
-          <div className="flex flex-col sm:flex-row gap-6 mb-12 justify-center">
+          
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="text-lg text-gray-400 max-w-2xl mb-10"
+          >
+            Join thousands of travelers who trust WanderNest to turn their dream destinations into reality.
+          </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.8 }}
+            className="flex flex-col sm:flex-row gap-6 mb-16"
+          >
             <button
-              className="bg-[#e94560] hover:bg-[#f8b400] text-white font-bold py-4 px-8 rounded-xl shadow-lg transition duration-200 text-lg"
+              className="group bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-bold py-4 px-8 rounded-2xl shadow-2xl transition-all duration-300 text-lg transform hover:scale-105 hover:shadow-[#e94560]/50"
               onClick={() => navigate("/plan")}
             >
-              Plan Your Trip
+              <span className="flex items-center gap-2">
+                Start Planning
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
+              </span>
             </button>
             <button
-              className="bg-[#0f3460] hover:bg-[#e94560] text-white font-bold py-4 px-8 rounded-xl shadow-lg transition duration-200 text-lg"
+              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 text-white font-bold py-4 px-8 rounded-2xl shadow-xl transition-all duration-300 text-lg transform hover:scale-105"
               onClick={() => navigate("/register")}
             >
-              Sign Up
+              Watch Demo
             </button>
-          </div>
+          </motion.div>
         </motion.div>
+        
+        {/* Floating Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-white rounded-full opacity-20"
+              animate={{
+                y: [-20, -100],
+                opacity: [0, 1, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                delay: i * 0.5,
+              }}
+              style={{
+                left: `${20 + i * 15}%`,
+                top: '90%',
+              }}
+            />
+          ))}
+        </div>
       </section>
+
       {/* Why WanderNest */}
-      <section className="py-10">
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-6 text-center">Why WanderNest?</h2>
-          <div className="flex overflow-x-auto gap-6 justify-center pb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Why Choose <span className="text-[#e94560]">WanderNest</span>?
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              We're not just another travel website. We're your intelligent travel companion, 
+              combining cutting-edge technology with human expertise to create extraordinary journeys.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {whyCards.map((card, idx) => (
               <motion.div
                 key={card.title}
-                whileHover={{ scale: 1.08, boxShadow: "0 0 24px #e94560" }}
-                className="min-w-[220px] bg-[#232526]/80 rounded-2xl p-6 flex flex-col items-center glassmorphism border border-[#e94560]/30 transition-all duration-300"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover={{ scale: 1.05, rotateY: 5 }}
+                className="bg-gradient-to-br from-[#232526]/80 to-[#414345]/60 rounded-3xl p-8 backdrop-blur-sm border border-white/10 shadow-xl hover:shadow-2xl hover:shadow-[#e94560]/20 transition-all duration-300"
               >
-                <span className="text-4xl mb-2">{card.icon}</span>
-                <span className="font-bold text-lg mb-1">{card.title}</span>
-                <span className="text-gray-300 text-sm">{card.desc}</span>
+                <div className="text-5xl mb-4">{card.icon}</div>
+                <h3 className="font-bold text-xl mb-3 text-white">{card.title}</h3>
+                <p className="text-gray-300 leading-relaxed">{card.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
-      {/* Destination Previews */}
-      <section className="py-10">
+
+      {/* Features Deep Dive */}
+      <section className="py-20 bg-gradient-to-r from-[#1a1a2e]/50 to-[#0f3460]/50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-6 text-center">Popular Destinations</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Powered by <span className="text-[#1fd1f9]">Innovation</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Experience the future of travel planning with our advanced features designed to make every trip perfect.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {features.map((feature, idx) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.2 }}
+                className="flex items-start space-x-6"
+              >
+                <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-r from-[#e94560] to-[#f8b400] rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                  {feature.icon}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
+                  <p className="text-gray-300 leading-relaxed text-lg">{feature.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Destination Previews */}
+      <section id="destinations" className="py-20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Trending <span className="text-[#b621fe]">Destinations</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Discover the world's most captivating destinations, carefully curated for unforgettable experiences. 
+              From bustling cities to serene landscapes, find your perfect escape.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {destinations.map((d, idx) => (
               <motion.div
                 key={d.name}
-                whileHover={{ scale: 1.04, boxShadow: "0 0 24px #1fd1f9" }}
-                className="bg-[#232526]/80 rounded-2xl overflow-hidden shadow-xl glassmorphism border border-[#1fd1f9]/30 flex flex-col"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover={{ scale: 1.03, rotateY: 2 }}
+                className="group relative bg-gradient-to-br from-[#232526]/80 to-[#414345]/60 rounded-3xl overflow-hidden shadow-2xl hover:shadow-[#1fd1f9]/30 transition-all duration-500"
               >
-                <img src={d.image} alt={d.name} className="h-40 w-full object-cover" />
-                <div className="p-4 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-2xl">{d.flag}</span>
-                    <span className="font-bold text-lg">{d.name}</span>
-                    <span className="ml-auto text-xl">{d.icon}</span>
+                <div className="relative overflow-hidden">
+                  <img 
+                    src={d.image} 
+                    alt={d.name} 
+                    className="h-56 w-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-semibold">
+                    {d.cost}
                   </div>
-                  <span className="text-gray-300 mb-2">Avg. Cost: <span className="font-bold">{d.cost}</span></span>
+                </div>
+                
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{d.flag}</span>
+                      <h3 className="font-bold text-xl">{d.name}</h3>
+                    </div>
+                    <span className="text-3xl">{d.icon}</span>
+                  </div>
+                  
+                  <p className="text-gray-300 mb-4 text-sm">
+                    Discover the magic of {d.name} with carefully crafted experiences that blend culture, adventure, and relaxation.
+                  </p>
+                  
                   <button
-                    className="mt-auto bg-[#e94560] hover:bg-[#f8b400] text-white font-semibold py-2 px-6 rounded-lg shadow transition duration-200"
+                    className="w-full bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
                     onClick={() => navigate("/plan")}
                   >
-                    Plan Now
+                    Explore {d.name}
                   </button>
                 </div>
               </motion.div>
@@ -128,69 +360,118 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* Testimonials Carousel */}
-      <section className="py-10">
+
+      {/* Testimonials */}
+      <section className="py-20 bg-gradient-to-r from-[#232526]/30 to-[#414345]/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-6 text-center">Happy Travelers</h2>
-          <div className="flex gap-8 justify-center overflow-x-auto pb-4">
-            {testimonials.map((t, idx) => (
-              <motion.div
-                key={t.name}
-                whileHover={{ scale: 1.05 }}
-                className="bg-[#232526]/80 rounded-2xl p-6 flex flex-col items-center glassmorphism border border-[#b621fe]/30 shadow-xl min-w-[260px]"
-              >
-                <img src={t.avatar} alt={t.name} className="w-16 h-16 rounded-full mb-3 border-4 border-[#b621fe]/40 object-cover" />
-                <span className="font-bold text-lg mb-1">{t.name}</span>
-                <span className="text-gray-300 text-center">{t.text}</span>
-              </motion.div>
-            ))}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              What Our <span className="text-[#f8b400]">Travelers Say</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Don't just take our word for it. Hear from fellow adventurers who've transformed their travel dreams into reality with WanderNest.
+            </p>
+          </motion.div>
+
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              key={currentTestimonial}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              className="bg-gradient-to-br from-[#232526]/80 to-[#414345]/60 rounded-3xl p-8 md:p-12 text-center backdrop-blur-sm border border-white/10 shadow-2xl"
+            >
+              <div className="flex justify-center mb-4">
+                {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                  <span key={i} className="text-[#f8b400] text-2xl">⭐</span>
+                ))}
+              </div>
+              
+              <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed font-light">
+                "{testimonials[currentTestimonial].text}"
+              </p>
+              
+              <div className="flex items-center justify-center gap-4">
+                <img 
+                  src={testimonials[currentTestimonial].avatar} 
+                  alt={testimonials[currentTestimonial].name}
+                  className="w-16 h-16 rounded-full border-4 border-[#e94560]/40 object-cover"
+                />
+                <div className="text-left">
+                  <div className="font-bold text-lg">{testimonials[currentTestimonial].name}</div>
+                  <div className="text-gray-400">{testimonials[currentTestimonial].location}</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Testimonial Navigation */}
+            <div className="flex justify-center mt-8 space-x-3">
+              {testimonials.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentTestimonial(idx)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    idx === currentTestimonial ? 'bg-[#e94560] scale-125' : 'bg-white/30 hover:bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
-      {/* Footer */}
-      <footer className="bg-[#232526] py-8 mt-10">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
-          <div className="flex gap-4 mb-4 md:mb-0">
-            {/* Instagram */}
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#e94560] transition-colors duration-300">
-              <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24" className="hover:drop-shadow-glow">
-                <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm5.25.75a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-              </svg>
-            </a>
-            {/* Twitter */}
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#1fd1f9] transition-colors duration-300">
-              <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24" className="hover:drop-shadow-glow">
-                <path d="M22.46 6c-.77.35-1.6.59-2.47.7a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04A4.28 4.28 0 0 0 16.11 4c-2.37 0-4.29 1.92-4.29 4.29 0 .34.04.67.11.99C7.69 9.13 4.07 7.38 1.64 4.7c-.37.64-.58 1.38-.58 2.17 0 1.5.76 2.83 1.92 3.61a4.28 4.28 0 0 1-1.94-.54v.05c0 2.09 1.49 3.83 3.47 4.23-.36.1-.74.16-1.13.16-.28 0-.54-.03-.8-.08.54 1.68 2.12 2.9 3.99 2.93A8.6 8.6 0 0 1 2 19.54a12.13 12.13 0 0 0 6.56 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19 0-.37-.01-.56A8.7 8.7 0 0 0 24 4.59a8.48 8.48 0 0 1-2.54.7z"/>
-              </svg>
-            </a>
-            {/* LinkedIn */}
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#b621fe] transition-colors duration-300">
-              <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24" className="hover:drop-shadow-glow">
-                <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.25c-.97 0-1.75-.78-1.75-1.75s.78-1.75 1.75-1.75 1.75.78 1.75 1.75-.78 1.75-1.75 1.75zm13.5 11.25h-3v-5.5c0-1.32-.03-3-1.83-3-1.83 0-2.11 1.43-2.11 2.91v5.59h-3v-10h2.88v1.36h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.59v5.61z"/>
-              </svg>
-            </a>
-            {/* Facebook */}
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#f8b400] transition-colors duration-300">
-              <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24" className="hover:drop-shadow-glow">
-                <path d="M22.675 0h-21.35c-.733 0-1.325.592-1.325 1.325v21.351c0 .732.592 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.797.143v3.24l-1.918.001c-1.504 0-1.797.715-1.797 1.763v2.312h3.587l-.467 3.622h-3.12v9.294h6.116c.732 0 1.324-.592 1.324-1.324v-21.351c0-.733-.592-1.325-1.324-1.325z"/>
-              </svg>
-            </a>
-          </div>
-          <div className="flex gap-6 text-gray-400 text-sm">
-            <a href="/about" className="hover:text-white">About</a>
-            <a href="/privacy" className="hover:text-white">Privacy</a>
-            <a href="/blog" className="hover:text-white">Blog</a>
-            <a href="/careers" className="hover:text-white">Careers</a>
-          </div>
+
+      {/* CTA Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="max-w-4xl mx-auto"
+          >
+            <h2 className="text-4xl md:text-6xl font-bold mb-6">
+              Ready to Start Your <span className="bg-gradient-to-r from-[#e94560] to-[#f8b400] text-transparent bg-clip-text">Adventure</span>?
+            </h2>
+            <p className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed">
+              Join millions of travelers who trust WanderNest to make their journeys extraordinary. 
+              Your next adventure is just one click away.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <button
+                className="group bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-bold py-4 px-12 rounded-2xl shadow-2xl transition-all duration-300 text-xl transform hover:scale-105 hover:shadow-[#e94560]/50"
+                onClick={() => navigate("/plan")}
+              >
+                <span className="flex items-center gap-3">
+                  Start Planning Now
+                  <span className="group-hover:translate-x-2 transition-transform">🚀</span>
+                </span>
+              </button>
+              
+              <div className="flex items-center gap-4 text-gray-300">
+                <span>✓ Free to start</span>
+                <span>✓ No credit card required</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
-        <div className="text-center text-gray-500 mt-4 text-xs">
-          &copy; {new Date().getFullYear()} WanderNest. All rights reserved.
-        </div>
-      </footer>
-      <div className="text-white text-center mt-10">
-        <h1 className="text-3xl">🌍 WanderNest Home</h1>
-        <p className="text-lg mt-4">Frontend is connected to Backend!</p>
-      </div>
+      </section>
+
+
+      {/* Floating Action Button */}
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 2 }}
+        whileHover={{ scale: 1.1 }}
+        className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-[#e94560] to-[#f8b400] rounded-full shadow-2xl flex items-center justify-center text-2xl hover:shadow-[#e94560]/50 transition-all duration-300 z-50"
+        onClick={() => navigate("/Chatbot")}
+      >
+        💬
+      </motion.button>
     </div>
   );
 };
