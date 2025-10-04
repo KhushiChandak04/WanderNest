@@ -4,19 +4,24 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import bgImage from "../assets/bg.jpg";
 import { Target, ShieldCheck, Handshake, Mail, Phone, MapPin } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 // Mock API for demo purposes
 const API = {
   get: (url) => Promise.resolve({ data: "Connected successfully!" })
 };
 
+// Format currency in INR consistently
+const formatINR = (value: number) =>
+  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
+
 const destinations = [
-  { name: "Japan", flag: "🇯🇵", cost: "$1800", icon: "🗻", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&h=300&fit=crop" },
-  { name: "Italy", flag: "🇮🇹", cost: "$2200", icon: "🍕", image: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=300&fit=crop" },
-  { name: "India", flag: "🇮🇳", cost: "$1200", icon: "🕌", image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&h=300&fit=crop" },
-  { name: "France", flag: "🇫🇷", cost: "$2000", icon: "🗼", image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=300&fit=crop" },
-  { name: "Bali", flag: "🇮🇩", cost: "$1500", icon: "🏝️", image: "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400&h=300&fit=crop" },
-  { name: "Norway", flag: "🇳🇴", cost: "$2500", icon: "🏔️", image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop" }
+  { name: "Japan", flag: "🇯🇵", costINR: 150000, icon: "🗻", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&h=600&fit=crop" },
+  { name: "Italy", flag: "🇮🇹", costINR: 180000, icon: "🍕", image: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop" },
+  { name: "India", flag: "🇮🇳", costINR: 100000, icon: "🕌", image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&h=600&fit=crop" },
+  { name: "France", flag: "🇫🇷", costINR: 170000, icon: "🗼", image: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&h=600&fit=crop" },
+  { name: "Bali", flag: "🇮🇩", costINR: 120000, icon: "🏝️", image: "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=800&h=600&fit=crop" },
+  { name: "Norway", flag: "🇳🇴", costINR: 200000, icon: "🏔️", image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop" }
 ];
 
 const whyCards = [
@@ -68,6 +73,7 @@ const stats = [
 
 const Home = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [showFAQ, setShowFAQ] = useState(false);
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const navigate = useNavigate();
@@ -261,11 +267,17 @@ const Home = () => {
                   <img 
                     src={d.image} 
                     alt={d.name} 
-                    className="h-56 w-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    className="h-56 w-full object-cover group-hover:scale-110 transition-transform duration-500 bg-[#0b1220]" 
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      // Fallback to a generic Unsplash search for destination if image fails
+                      target.src = `https://source.unsplash.com/800x600/?${encodeURIComponent(d.name)},landmark`;
+                      target.onerror = null; // prevent infinite loop
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-semibold">
-                    {d.cost}
+                    {formatINR(d.costINR)}
                   </div>
                 </div>
                 
@@ -544,16 +556,164 @@ const Home = () => {
 
 
       {/* Floating Action Button */}
+      {/* Floating FAQ Toggle and Panel */}
       <motion.button
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ delay: 2 }}
-        whileHover={{ scale: 1.1 }}
-        className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-[#e94560] to-[#f8b400] rounded-full shadow-2xl flex items-center justify-center text-2xl hover:shadow-[#e94560]/50 transition-all duration-300 z-50"
-        onClick={() => navigate("/Chatbot")}
+        transition={{ delay: 0.8 }}
+        whileHover={{ scale: 1.08 }}
+        aria-label="Open FAQs"
+        className={`fixed bottom-8 right-8 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-[60] ${showFAQ ? "bg-[#0b1220] border border-[#f8b400]/50" : "bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:shadow-[#e94560]/50"}`}
+        onClick={() => setShowFAQ((v) => !v)}
       >
-        💬
+        {showFAQ ? "✖" : "💬"}
       </motion.button>
+
+      {showFAQ && (
+        <motion.aside
+          initial={{ opacity: 0, y: 40, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 260, damping: 24 }}
+          className="fixed bottom-28 right-8 w-[92vw] sm:w-[480px] max-h-[70vh] overflow-hidden rounded-2xl bg-[#0b1220]/95 backdrop-blur-xl border border-white/10 shadow-2xl z-[55]"
+          role="dialog"
+          aria-label="Frequently Asked Questions"
+        >
+          <div className="p-5 border-b border-white/10 flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold">International Travel FAQs</h3>
+              <p className="text-sm text-gray-400">For Indian nationals — visas, funds, and travel basics</p>
+            </div>
+            <button
+              onClick={() => setShowFAQ(false)}
+              className="text-gray-300 hover:text-white text-lg"
+              aria-label="Close"
+            >
+              ✖
+            </button>
+          </div>
+          <div className="p-5 overflow-y-auto max-h-[60vh] space-y-4">
+            {/* General FAQs (technical and high-value) */}
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="faq-1">
+                <AccordionTrigger className="text-left">Minimum passport validity and blank pages?</AccordionTrigger>
+                <AccordionContent>
+                  Most countries require 6 months validity from your date of return and at least 2 blank pages. Some accept 3 months (e.g., parts of Europe on arrival), but 6 months is the safest threshold.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-2">
+                <AccordionTrigger className="text-left">Proof of funds: how much and what statements?</AccordionTrigger>
+                <AccordionContent>
+                  Maintain recent bank statements for 6 months with healthy average balance. A practical guideline is airfare + stay + daily expenses (₹7k–₹12k/day) × trip days. Add ITRs (2–3 years), salary slips, or business income proof.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-3">
+                <AccordionTrigger className="text-left">Schengen insurance: coverage and validity?</AccordionTrigger>
+                <AccordionContent>
+                  Travel insurance is mandatory with minimum €30,000 medical coverage, valid for the entire Schengen area and trip duration, with zero or low deductible preferred. Include policy certificate with application.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-4">
+                <AccordionTrigger className="text-left">Booking proofs: refundable tickets vs. dummy bookings?</AccordionTrigger>
+                <AccordionContent>
+                  Visa sections prefer confirmed or refundable bookings. Holding reservations are acceptable but risky if unverifiable. Use refundable fares or verified itinerary services and ensure accommodation can be confirmed by the embassy if needed.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-5">
+                <AccordionTrigger className="text-left">Employment/self‑employment documents required?</AccordionTrigger>
+                <AccordionContent>
+                  Employees: employer letter with designation, salary slips (3–6 months), and leave approval. Self‑employed: GST/UDYAM, MOA/partnership deed, business bank statements, ITRs. Students: enrollment letter and NOC.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-6">
+                <AccordionTrigger className="text-left">Schengen “main destination” vs. “first entry” rule?</AccordionTrigger>
+                <AccordionContent>
+                  Apply at the country of main stay (most nights). If equal nights in multiple countries, apply at the country of first entry. Your first entry should normally match the issuing country on your visa.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-7">
+                <AccordionTrigger className="text-left">Biometrics validity and re‑use for visas?</AccordionTrigger>
+                <AccordionContent>
+                  Schengen biometrics remain valid for 59 months in VIS and may be re‑used if still valid. For UK/US/Japan, biometrics are typically required for each new application. Always follow your VFS/embassy instructions.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-8">
+                <AccordionTrigger className="text-left">Processing timelines and fastest options?</AccordionTrigger>
+                <AccordionContent>
+                  Typical timelines: Schengen 15–30 days, Japan 5–10 working days, UK 2–6+ weeks (priority/super priority in some centers), US interview slots may take months—plan far in advance.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-9">
+                <AccordionTrigger className="text-left">Rejected before—what improves approval odds?</AccordionTrigger>
+                <AccordionContent>
+                  Address refusal reasons with stronger documentation: clearer itinerary, improved bank balance and consistency, stronger ties to India (employment, property, family), and complete insurance. Avoid mismatches in forms vs. docs.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* Destination-specific snippets */}
+            <div className="mt-2 space-y-2">
+              <div className="text-sm text-gray-400">Popular destinations quick notes</div>
+              <Accordion type="multiple" className="w-full">
+                <AccordionItem value="schengen">
+                  <AccordionTrigger className="text-left">Schengen (France, Italy, etc.)</AccordionTrigger>
+                  <AccordionContent>
+                    Type C tourist visa. Include itinerary, proof of stay, insurance of €30,000+, and funds. Biometrics required. Apply where you spend most nights or first entry if equal. Processing ~15–30 days.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="japan">
+                  <AccordionTrigger className="text-left">Japan</AccordionTrigger>
+                  <AccordionContent>
+                    Submit itinerary, stay proof, financials, and employment docs. No on‑arrival visa; apply via VFS/consulate. Processing typically 5–10 working days.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="uk">
+                  <AccordionTrigger className="text-left">United Kingdom</AccordionTrigger>
+                  <AccordionContent>
+                    Online form, biometrics, and supporting docs. Standard visitor visas take ~2–6+ weeks. Priority/super priority services are available in select centers.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="usa">
+                  <AccordionTrigger className="text-left">United States</AccordionTrigger>
+                  <AccordionContent>
+                    B1/B2: DS‑160, fee, VAC + interview. Long wait times common—book months ahead. Strengthen ties to India and ensure document consistency.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="bali">
+                  <AccordionTrigger className="text-left">Bali (Indonesia)</AccordionTrigger>
+                  <AccordionContent>
+                    Visa on Arrival (VoA) available for tourism. Carry return/onward tickets, hotel proof, and sufficient funds. Rules change often—verify latest policies.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="uae">
+                  <AccordionTrigger className="text-left">UAE (Dubai, Abu Dhabi)</AccordionTrigger>
+                  <AccordionContent>
+                    Tourist e‑visas via authorized partners/airlines. Ensure hotel booking, return ticket, and funds. Processing is usually quick (2–5 working days).
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="thailand">
+                  <AccordionTrigger className="text-left">Thailand</AccordionTrigger>
+                  <AccordionContent>
+                    Indians can apply for e‑visa/e‑VOA depending on policy. Keep return tickets, stay proof, and funds. Processing times vary; check official channels.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+
+            <div className="pt-2 text-sm text-gray-400">
+              Tip: Rules change often. Always verify on official embassy sites or trusted VFS pages before applying.
+            </div>
+            <div className="pt-1">
+              <button
+                className="w-full bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-semibold py-2.5 rounded-xl shadow-lg transition-all duration-300"
+                onClick={() => navigate("/visa-guide")}
+              >
+                Open Visa Guide
+              </button>
+            </div>
+          </div>
+        </motion.aside>
+      )}
     </div>
   );
 };

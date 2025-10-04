@@ -247,7 +247,7 @@ const PlanTrip = () => {
                           step={1000}
                           value={budget}
                           onChange={e => setBudget(Number(e.target.value))}
-                          className="w-full h-3 bg-[#232526]/50 rounded-lg appearance-none cursor-pointer slider"
+                          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                         />
                         <div className="flex justify-between text-base text-[#b6c2d1]">
                           <span>{formatINR(10000)}</span>
@@ -356,13 +356,27 @@ const PlanTrip = () => {
           </div>
         </div>
       </div>
-      <style jsx>{`
+  <style>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in {
           animation: fade-in 0.6s ease-out;
+        }
+        /* Slider track styles for better visibility */
+        .slider::-webkit-slider-runnable-track {
+          height: 8px;
+          background: rgba(255,255,255,0.25);
+          border-radius: 9999px;
+        }
+        .slider:focus::-webkit-slider-runnable-track {
+          background: rgba(255,255,255,0.35);
+        }
+        .slider::-moz-range-track {
+          height: 8px;
+          background: rgba(255,255,255,0.25);
+          border-radius: 9999px;
         }
         .slider::-webkit-slider-thumb {
           appearance: none;
@@ -372,6 +386,7 @@ const PlanTrip = () => {
           border-radius: 50%;
           cursor: pointer;
           box-shadow: 0 4px 12px rgba(31, 209, 249, 0.4);
+          margin-top: -8px;
         }
         .slider::-moz-range-thumb {
           height: 24px;
@@ -382,6 +397,7 @@ const PlanTrip = () => {
           border: none;
           box-shadow: 0 4px 12px rgba(31, 209, 249, 0.4);
         }
+        .slider:focus { outline: none; }
       `}</style>
     </div>
   );
