@@ -21,7 +21,8 @@ router.post("/chat", async (req, res) => {
       return res.json({ choices: [{ message: { content: fallback } }] });
     }
     if (!apiKey) {
-      return res.status(500).json({ error: "Missing XAI_API_KEY in server environment." });
+      const fallback = buildFallbackReply(messages, trip);
+      return res.json({ choices: [{ message: { content: fallback } }], meta: { demo: true, reason: "missing_api_key" } });
     }
 
     const systemPrompt = [
@@ -61,23 +62,17 @@ router.post("/chat", async (req, res) => {
         details = await resp.text();
       }
       console.error("/api/ai/chat upstream error", resp.status, details);
-      if (process.env.AI_DEMO_FALLBACK === 'true') {
-        const fallback = buildFallbackReply(messages, trip);
-        return res.json({ choices: [{ message: { content: fallback } }] });
-      }
-      return res.status(resp.status).json({ error: "Upstream error", details });
+      const fallback = buildFallbackReply(messages, trip);
+      return res.json({ choices: [{ message: { content: fallback } }], meta: { demo: true, reason: "upstream_error", details } });
     }
 
     const data = await resp.json();
     res.json(data);
   } catch (err) {
     console.error("/api/ai/chat error", err);
-    if (process.env.AI_DEMO_FALLBACK === 'true') {
-      const { messages = [], trip } = req.body || {};
-      const fallback = buildFallbackReply(messages, trip);
-      return res.json({ choices: [{ message: { content: fallback } }] });
-    }
-    res.status(500).json({ error: "AI proxy failed" });
+    const { messages = [], trip } = req.body || {};
+    const fallback = buildFallbackReply(messages, trip);
+    return res.json({ choices: [{ message: { content: fallback } }], meta: { demo: true, reason: "exception" } });
   }
 });
 

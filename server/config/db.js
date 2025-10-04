@@ -6,10 +6,8 @@ let isConnected = false;
 // Connect to MongoDB
 export const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    // Mongoose 6+ ignores useNewUrlParser/useUnifiedTopology; pass only URI
+    const conn = await mongoose.connect(process.env.MONGO_URI);
     isConnected = true;
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {

@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { aiChat, type ChatMessage, type TripContext } from "@/services/ai";
+import { aiChatWithRetry, type ChatMessage, type TripContext } from "@/services/ai";
 import Navigation from "@/components/Navigation";
 
 function formatINR(value?: number) {
@@ -59,12 +59,17 @@ const Itinerary = () => {
     setInput("");
     setLoading(true);
     try {
-      const resp = await aiChat(newMsgs.filter(m => m.role !== "assistant" || m.content.length < 4000), trip);
+      const resp = await aiChatWithRetry(newMsgs.filter(m => m.role !== "assistant" || m.content.length < 4000), trip);
       const ai = resp?.choices?.[0]?.message?.content || resp?.choices?.[0]?.delta?.content || "Sorry, I couldn't generate a response.";
       setMessages(prev => [...prev, { role: "assistant", content: ai }] as ChatMessage[]);
     } catch (e: any) {
-  const errText = typeof e?.response?.data === 'object' ? JSON.stringify(e.response.data) : (e?.response?.data || e?.message || 'Unknown error');
-      setMessages(prev => [...prev, { role: "assistant", content: `There was an issue contacting the itinerary assistant. Details: ${errText}` }] as ChatMessage[]);
+      const errText = typeof e?.response?.data === 'object' ? JSON.stringify(e.response.data) : (e?.response?.data || e?.message || 'Unknown error');
+      const hint = e?.code === 'ERR_NETWORK' ? "Network issue detected. If you're on localhost, ensure the backend at port 5000 is running. We'll keep your messages and you can retry." : undefined;
+      const msg = [
+        `There was an issue contacting the itinerary assistant. Details: ${errText}`,
+        hint
+      ].filter(Boolean).join("\n\n");
+      setMessages(prev => [...prev, { role: "assistant", content: msg }] as ChatMessage[]);
     } finally {
       setLoading(false);
     }
