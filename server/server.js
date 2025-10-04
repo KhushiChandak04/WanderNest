@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB, dbHealth } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
-import visaRoutes from "./routes/visa.js"; // <-- our new Visa API
 
 dotenv.config();
 
@@ -19,7 +18,7 @@ app.get("/healthz", (_req, res) => {
   res.json({
     status: "ok",
     uptime: process.uptime(),
-    db: dbHealth(),
+    db: dbHealth()
   });
 });
 
@@ -30,13 +29,6 @@ app.get("/", (_req, res) => {
 
 // Auth routes
 app.use("/api/auth", authRoutes);
-
-// Visa routes
-app.use("/api/visa", visaRoutes);
-
-// Example placeholder routes for FoodFinder and PlanTrip (optional, can add later)
-// app.use("/api/food", foodRoutes);
-// app.use("/api/trips", tripRoutes);
 
 // Start server only after DB connection
 const startServer = async () => {

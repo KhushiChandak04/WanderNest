@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, MapPin, Users, DollarSign, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import bgImage from "../assets/bg.jpg";
 
@@ -11,12 +11,14 @@ const steps = [
 
 const PlanTrip = () => {
   const [step, setStep] = useState(0);
-  const [budget, setBudget] = useState(2000);
+  const [budget, setBudget] = useState(100000); // INR default
   const [formData, setFormData] = useState({
     startDate: '',
     endDate: '',
     destination: '',
-    notes: ''
+    notes: '',
+    currency: 'INR', // track currency explicitly
+    budgetINR: 100000, // keep in INR for future LLM usage
   });
 
   const nextStep = () => setStep(Math.min(step + 1, steps.length - 1));
@@ -25,6 +27,15 @@ const PlanTrip = () => {
   const updateFormData = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  // INR currency formatter
+  const formatINR = (value: number) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
+
+  // Keep formData in sync with budget for future LLM use
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, budgetINR: budget, currency: 'INR' }));
+  }, [budget]);
 
   return (
     <div
@@ -151,12 +162,39 @@ const PlanTrip = () => {
                       className="w-full p-4 rounded-xl bg-[#232526]/70 text-white border border-[#e94560]/60 focus:border-[#1fd1f9] focus:ring-2 focus:ring-[#1fd1f9]/50 transition-all duration-300 backdrop-blur-sm placeholder-[#b6c2d1] outline-none" 
                     />
                   </div>
-                  <div className="bg-gradient-to-br from-[#1fd1f9]/20 to-[#e94560]/20 rounded-2xl h-48 flex items-center justify-center border border-[#e94560]/20 backdrop-blur-sm">
-                    <div className="text-center">
-                      <MapPin className="w-12 h-12 text-[#1fd1f9] mx-auto mb-4" />
-                      <span className="text-[#1fd1f9] text-lg font-medium">Interactive Map Preview</span>
-                      <p className="text-[#b6c2d1] text-sm mt-2">Map integration coming soon</p>
-                    </div>
+
+                  {/* Dynamic Map Preview */}
+                  <div className="rounded-2xl overflow-hidden border border-[#e94560]/20 shadow-lg bg-[#0b1220]">
+                    {formData.destination.trim().length > 1 ? (
+                      <iframe
+                        title="Destination Map"
+                        src={`https://www.google.com/maps?q=${encodeURIComponent(formData.destination)}&output=embed`}
+                        className="w-full"
+                        style={{ height: 320 }}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                    ) : (
+                      <div className="h-80 flex items-center justify-center text-center px-6 bg-gradient-to-br from-[#1fd1f9]/10 to-[#e94560]/10">
+                        <div>
+                          <MapPin className="w-12 h-12 text-[#1fd1f9] mx-auto mb-3" />
+                          <p className="text-[#b6c2d1]">Type a destination to see a live map preview</p>
+                        </div>
+                      </div>
+                    )}
+                    {formData.destination.trim().length > 1 && (
+                      <div className="p-3 bg-[#0b1220]/70 border-t border-[#e94560]/20 flex items-center justify-between">
+                        <span className="text-sm text-[#b6c2d1]">Preview of: <span className="text-white font-semibold">{formData.destination}</span></span>
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formData.destination)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-[#1fd1f9] hover:text-white underline"
+                        >
+                          Open in Maps
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -168,35 +206,69 @@ const PlanTrip = () => {
                     <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-[#1fd1f9] to-[#e94560] bg-clip-text text-transparent">
                       What's your budget?
                     </h2>
-                    <p className="text-[#b6c2d1]">Set your travel budget range</p>
+                    <p className="text-[#b6c2d1]">Set your travel budget (INR)</p>
                   </div>
+
+                  {/* Total Budget Display (INR) */}
                   <div className="space-y-6">
                     <div className="text-center">
-                      <div className="text-5xl font-extrabold text-[#f8b400] mb-2">${budget.toLocaleString()}</div>
-                      <div className="text-[#b6c2d1]">Total Budget</div>
+                      <div className="text-5xl font-extrabold text-[#f8b400] mb-2">
+                        {formatINR(budget)}
+                      </div>
+                      <div className="text-[#b6c2d1]">Total Budget (INR)</div>
                     </div>
-                    <div className="space-y-4">
-                      <input
-                        type="range"
-                        min={500}
-                        max={10000}
-                        value={budget}
-                        onChange={e => setBudget(Number(e.target.value))}
-                        className="w-full h-3 bg-[#232526]/50 rounded-lg appearance-none cursor-pointer slider"
-                      />
-                      <div className="flex justify-between text-base text-[#b6c2d1]">
-                        <span>$500</span>
-                        <span>$10,000+</span>
+
+                    {/* Manual Budget Input (INR) */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="block text-base font-semibold text-[#f8b400]">Enter Budget (INR)</label>
+                        <input
+                          type="number"
+                          min={10000}
+                          max={1000000}
+                          step={1000}
+                          value={budget}
+                          onChange={(e) => {
+                            const val = Math.max(10000, Math.min(1000000, Number(e.target.value) || 0));
+                            setBudget(val);
+                          }}
+                          className="w-full p-4 rounded-xl bg-[#232526]/70 text-white border border-[#e94560]/60 focus:border-[#1fd1f9] focus:ring-2 focus:ring-[#1fd1f9]/50 transition-all duration-300 backdrop-blur-sm outline-none"
+                        />
+                        <p className="text-xs text-[#b6c2d1]">Range: ₹10,000 – ₹10,00,000</p>
+                      </div>
+
+                      {/* Slider (INR) */}
+                      <div className="space-y-2">
+                        <label className="block text-base font-semibold text-[#f8b400]">Adjust with Slider</label>
+                        <input
+                          type="range"
+                          min={10000}
+                          max={1000000}
+                          step={1000}
+                          value={budget}
+                          onChange={e => setBudget(Number(e.target.value))}
+                          className="w-full h-3 bg-[#232526]/50 rounded-lg appearance-none cursor-pointer slider"
+                        />
+                        <div className="flex justify-between text-base text-[#b6c2d1]">
+                          <span>{formatINR(10000)}</span>
+                          <span>{formatINR(1000000)}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 mt-8">
+
+                    {/* Simple Allocation Preview (INR) */}
+                    <div className="grid grid-cols-2 gap-4 mt-2">
                       <div className="bg-[#232526]/70 rounded-xl p-4 text-center backdrop-blur-sm">
-                        <div className="text-2xl font-bold text-[#1fd1f9]">${Math.round(budget * 0.4).toLocaleString()}</div>
-                        <div className="text-[#b6c2d1] text-sm">Accommodation</div>
+                        <div className="text-2xl font-bold text-[#1fd1f9]">
+                          {formatINR(Math.round(budget * 0.4))}
+                        </div>
+                        <div className="text-[#b6c2d1] text-sm">Accommodation (40%)</div>
                       </div>
                       <div className="bg-[#232526]/70 rounded-xl p-4 text-center backdrop-blur-sm">
-                        <div className="text-2xl font-bold text-[#e94560]">${Math.round(budget * 0.3).toLocaleString()}</div>
-                        <div className="text-[#b6c2d1] text-sm">Activities</div>
+                        <div className="text-2xl font-bold text-[#e94560]">
+                          {formatINR(Math.round(budget * 0.3))}
+                        </div>
+                        <div className="text-[#b6c2d1] text-sm">Activities (30%)</div>
                       </div>
                     </div>
                   </div>
@@ -235,7 +307,11 @@ const PlanTrip = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-[#b6c2d1]">Budget:</span>
-                        <span className="text-[#f8b400] font-semibold">${budget.toLocaleString()}</span>
+                        <span className="text-[#f8b400] font-semibold">{formatINR(budget)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#b6c2d1]">Currency:</span>
+                        <span>INR</span>
                       </div>
                     </div>
                   </div>

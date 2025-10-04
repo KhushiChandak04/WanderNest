@@ -27,6 +27,7 @@ const Navbar = () => {
 
   const scrollToSection = (href) => {
     if (href.startsWith('/')) {
+      // Always allow direct navigation to /plan
       navigate(href);
       setIsMenuOpen(false);
       return;

@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import bgImage from "../assets/bg.jpg";
+import { Target, ShieldCheck, Handshake, Mail, Phone, MapPin } from "lucide-react";
 
 // Mock API for demo purposes
 const API = {
@@ -63,29 +64,6 @@ const stats = [
   { number: "120+", label: "Countries Covered", icon: "🌍" },
   { number: "1M+", label: "Trips Planned", icon: "📋" },
   { number: "98%", label: "Success Rate", icon: "⭐" }
-];
-
-const features = [
-  {
-    icon: "🤖",
-    title: "AI-Powered Planning",
-    description: "Our advanced AI analyzes millions of data points to create the perfect itinerary tailored to your preferences, budget, and travel style."
-  },
-  {
-    icon: "🌐",
-    title: "Real-Time Updates",
-    description: "Stay informed with live updates on weather, local events, flight changes, and safety alerts throughout your journey."
-  },
-  {
-    icon: "💎",
-    title: "Premium Partnerships",
-    description: "Exclusive deals with top airlines, hotels, and local experiences. Get VIP treatment and insider access to unique adventures."
-  },
-  {
-    icon: "🔒",
-    title: "Secure & Private",
-    description: "Your data is protected with bank-level encryption. We never share your personal information with third parties."
-  }
 ];
 
 const Home = () => {
@@ -189,12 +167,6 @@ const Home = () => {
                 <span className="group-hover:translate-x-1 transition-transform">→</span>
               </span>
             </button>
-            <button
-              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 text-white font-bold py-4 px-8 rounded-2xl shadow-xl transition-all duration-300 text-lg transform hover:scale-105"
-              onClick={() => navigate("/register")}
-            >
-              Watch Demo
-            </button>
           </motion.div>
         </motion.div>
         
@@ -252,44 +224,6 @@ const Home = () => {
                 <div className="text-5xl mb-4">{card.icon}</div>
                 <h3 className="font-bold text-xl mb-3 text-white">{card.title}</h3>
                 <p className="text-gray-300 leading-relaxed">{card.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Deep Dive */}
-      <section className="py-20 bg-gradient-to-r from-[#1a1a2e]/50 to-[#0f3460]/50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Powered by <span className="text-[#1fd1f9]">Innovation</span>
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Experience the future of travel planning with our advanced features designed to make every trip perfect.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {features.map((feature, idx) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.2 }}
-                className="flex items-start space-x-6"
-              >
-                <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-r from-[#e94560] to-[#f8b400] rounded-2xl flex items-center justify-center text-2xl shadow-lg">
-                  {feature.icon}
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
-                  <p className="text-gray-300 leading-relaxed text-lg">{feature.description}</p>
-                </div>
               </motion.div>
             ))}
           </div>
@@ -357,6 +291,154 @@ const Home = () => {
                 </div>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="relative py-20">
+        {/* Decorative blobs */}
+        <div className="pointer-events-none absolute inset-0 opacity-20">
+          <div className="absolute -top-10 -left-10 w-72 h-72 rounded-full blur-3xl bg-gradient-to-br from-[#1fd1f9]/40 to-[#e94560]/30" />
+          <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full blur-3xl bg-gradient-to-tr from-[#f8b400]/30 to-[#1fd1f9]/30" />
+        </div>
+
+        <div className="container mx-auto px-4 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-14"
+          >
+            <span className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm tracking-wide">
+              <MapPin className="w-4 h-4 mr-2 text-[#1fd1f9]" />
+              About WanderNest
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold mt-4">
+              Built for <span className="bg-gradient-to-r from-[#1fd1f9] via-[#b621fe] to-[#e94560] bg-clip-text text-transparent">Indian travelers</span>, loved worldwide
+            </h2>
+            <p className="text-gray-300 max-w-3xl mx-auto mt-4">
+              We blend intuitive design with practical features—visa guidance, local insights, smart budgeting in INR, and curated stays—to turn your dream trips into reality.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#1fd1f9]/10 transition"
+            >
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-[#1fd1f9] to-[#e94560] mb-4">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-2">Our Mission</h3>
+              <p className="text-gray-300">
+                Make global travel simple, stress‑free, and personal with thoughtful tools and seamless experiences.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#e94560]/10 transition"
+            >
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-[#e94560] to-[#f8b400] mb-4">
+                <ShieldCheck className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-2">What We Offer</h3>
+              <p className="text-gray-300">
+                Trip planning, visa help, food discovery, INR budgets, and tailor‑made itineraries—everything in one place.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#f8b400]/10 transition"
+            >
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-[#b621fe] to-[#1fd1f9] mb-4">
+                <Handshake className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-2">Why Choose Us</h3>
+              <p className="text-gray-300">
+                India‑first details, clean design, and real‑world convenience that saves your time and money.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="relative py-20">
+        {/* Decorative gradient bar */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-[#1fd1f9]/40 via-[#b621fe]/40 to-[#e94560]/40" />
+        <div className="container mx-auto px-4 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <span className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm tracking-wide">
+              <Phone className="w-4 h-4 mr-2 text-[#f8b400]" />
+              Contact Us
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold mt-4">
+              We’re here to <span className="bg-gradient-to-r from-[#e94560] to-[#f8b400] bg-clip-text text-transparent">help</span>
+            </h2>
+            <p className="text-gray-300 max-w-2xl mx-auto mt-4">
+              Questions, feedback, or partnerships—reach out and we’ll get back within 24 hours on business days.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#1fd1f9]/10 transition">
+              <Mail className="w-6 h-6 text-[#1fd1f9] mb-3" />
+              <h3 className="text-lg font-semibold mb-1">Support</h3>
+              <p className="text-gray-300 text-sm mb-2">Mon–Fri, 9:00 AM – 6:00 PM IST</p>
+              <a href="mailto:support@wandernest.com" className="text-[#1fd1f9] hover:text-white underline">
+                support@wandernest.com
+              </a>
+            </div>
+
+            <div className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#e94560]/10 transition">
+              <Handshake className="w-6 h-6 text-[#e94560] mb-3" />
+              <h3 className="text-lg font-semibold mb-1">Partnerships</h3>
+              <p className="text-gray-300 text-sm mb-2">Collaborate with WanderNest</p>
+              <a href="mailto:partners@wandernest.com" className="text-[#e94560] hover:text-white underline">
+                partners@wandernest.com
+              </a>
+            </div>
+
+            <div className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#b621fe]/10 transition">
+              <ShieldCheck className="w-6 h-6 text-[#b621fe] mb-3" />
+              <h3 className="text-lg font-semibold mb-1">Press</h3>
+              <p className="text-gray-300 text-sm mb-2">Media & PR inquiries</p>
+              <a href="mailto:press@wandernest.com" className="text-[#b621fe] hover:text-white underline">
+                press@wandernest.com
+              </a>
+            </div>
+
+            <div className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#f8b400]/10 transition">
+              <MapPin className="w-6 h-6 text-[#f8b400] mb-3" />
+              <h3 className="text-lg font-semibold mb-1">Social</h3>
+              <p className="text-gray-300 text-sm mb-2">Follow our journey</p>
+              <div className="flex gap-3">
+                <a className="text-[#f8b400] hover:text-white underline" href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+                <span className="text-gray-500">•</span>
+                <a className="text-[#1fd1f9] hover:text-white underline" href="https://twitter.com" target="_blank" rel="noreferrer">Twitter</a>
+                <span className="text-gray-500">•</span>
+                <a className="text-[#b621fe] hover:text-white underline" href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact CTA */}
+          <div className="mt-10 text-center">
+            <div className="glassmorphism bg-gradient-to-r from-[#1fd1f9]/10 via-[#b621fe]/10 to-[#e94560]/10 rounded-2xl p-8 max-w-3xl mx-auto border border-white/10">
+              <p className="text-gray-300">
+                Prefer email? Write to us at{" "}
+                <a href="mailto:hello@wandernest.com" className="text-[#1fd1f9] hover:text-white underline">
+                  hello@wandernest.com
+                </a>{" "}
+                and we’ll get back shortly.
+              </p>
+            </div>
           </div>
         </div>
       </section>
