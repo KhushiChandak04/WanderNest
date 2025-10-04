@@ -63,7 +63,7 @@ const Itinerary = () => {
       const ai = resp?.choices?.[0]?.message?.content || resp?.choices?.[0]?.delta?.content || "Sorry, I couldn't generate a response.";
       setMessages(prev => [...prev, { role: "assistant", content: ai }] as ChatMessage[]);
     } catch (e: any) {
-      const errText = typeof e?.response?.data === 'object' ? JSON.stringify(e.response.data) : (e?.message || 'Unknown error');
+  const errText = typeof e?.response?.data === 'object' ? JSON.stringify(e.response.data) : (e?.response?.data || e?.message || 'Unknown error');
       setMessages(prev => [...prev, { role: "assistant", content: `There was an issue contacting the itinerary assistant. Details: ${errText}` }] as ChatMessage[]);
     } finally {
       setLoading(false);

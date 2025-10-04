@@ -15,6 +15,6 @@ export type TripContext = {
 };
 
 export async function aiChat(messages: ChatMessage[], trip?: TripContext) {
-  const { data } = await API.post("/ai/chat", { messages, trip });
+  const { data } = await API.post("/ai/chat", { messages, trip }, { withCredentials: false });
   return data;
 }
