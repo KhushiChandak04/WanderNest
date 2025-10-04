@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin, Users, DollarSign, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import bgImage from "../assets/bg.jpg";
 
@@ -11,6 +12,7 @@ const steps = [
 
 const PlanTrip = () => {
   const [step, setStep] = useState(0);
+  const navigate = useNavigate();
   const [budget, setBudget] = useState(100000); // INR default
   const [formData, setFormData] = useState({
     startDate: '',
@@ -345,7 +347,17 @@ const PlanTrip = () => {
                 </div>
                 
                 <button 
-                  onClick={step === steps.length - 1 ? () => setStep(0) : nextStep}
+                  onClick={step === steps.length - 1 ? () => {
+                    const trip = {
+                      startDate: formData.startDate,
+                      endDate: formData.endDate,
+                      destination: formData.destination,
+                      notes: formData.notes,
+                      currency: 'INR',
+                      budgetINR: budget,
+                    };
+                    navigate('/itinerary', { state: { trip } });
+                  } : nextStep}
                   className="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold bg-gradient-to-r from-[#1fd1f9] to-[#f8b400] hover:from-[#1fd1f9]/80 hover:to-[#f8b400]/80 text-white transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#1fd1f9]/25"
                 >
                   {step === steps.length - 1 ? "Start Planning!" : "Next"}

@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PlanTrip from "./pages/PlanTrip";
+import Itinerary from "./pages/Itinerary";
 import NotFound from "./pages/NotFound";
 import VisaGuide from "./pages/VisaGuide";
 import FoodFinder from "./pages/FoodFinder";
@@ -36,6 +37,7 @@ function App(): JSX.Element {
               <Route path="/register" element={<Register />} />
               <Route path="/plan" element={<PlanTrip />} />
               <Route path="/visa-guide" element={<VisaGuide />} />
+            <Route path="/itinerary" element={<Itinerary />} />
               <Route path="/food-finder" element={<FoodFinder />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

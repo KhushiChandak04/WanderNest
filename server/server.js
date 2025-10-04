@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB, dbHealth } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import aiRoutes from "./routes/ai.js";
+import "./polyfills/fetch.js";
 
 dotenv.config();
 
@@ -29,18 +31,20 @@ app.get("/", (_req, res) => {
 
 // Auth routes
 app.use("/api/auth", authRoutes);
+// AI proxy routes
+app.use("/api/ai", aiRoutes);
 
-// Start server only after DB connection
+// Start server (best-effort DB connection for demo)
 const startServer = async () => {
   try {
     await connectDB();
+  } catch (error) {
+    console.error("⚠️ DB connection failed, continuing for AI demo:", error.message);
+  } finally {
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
-  } catch (error) {
-    console.error("❌ Failed to start server:", error.message);
-    process.exit(1); // stop only if DB connection is critical
   }
 };
 
