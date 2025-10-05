@@ -23,6 +23,7 @@ const Itinerary = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const exportRef = useRef<HTMLDivElement>(null);
 
   const tripSummary = useMemo(() => {
     const parts = [
@@ -50,6 +51,53 @@ const Itinerary = () => {
     // auto-scroll chat to bottom on new message
     containerRef.current?.scrollTo({ top: containerRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
+
+  async function downloadPDF() {
+    try {
+      // Prefer exporting the latest assistant message as the itinerary
+      const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
+      let node: HTMLElement | null = null;
+      if (lastAssistant) {
+        // Create a temporary hidden container with clean content
+        const temp = document.createElement('div');
+        temp.style.position = 'fixed';
+        temp.style.left = '-99999px';
+        temp.style.top = '0';
+        temp.style.width = '794px'; // A4 width at ~96dpi
+        temp.style.padding = '24px';
+        temp.style.background = '#ffffff';
+        temp.style.color = '#111827';
+        temp.style.fontFamily = 'ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial';
+        temp.innerHTML = `
+          <h1 style="margin:0 0 8px 0;font-size:22px;">Custom Itinerary${trip.destination ? ` – ${trip.destination}` : ''}</h1>
+          <div style="font-size:12px;color:#374151;margin-bottom:12px;">${tripSummary || ''}</div>
+          <pre style="white-space:pre-wrap;line-height:1.5;font-size:13px;margin:0;">${lastAssistant.content.replace(/</g, '&lt;')}</pre>
+        `;
+        document.body.appendChild(temp);
+        node = temp;
+      } else if (exportRef.current) {
+        node = exportRef.current;
+      }
+      if (!node) return;
+
+      const html2pdf = (await import('html2pdf.js')).default;
+      const fileName = `Itinerary${trip.destination ? '-' + trip.destination.replace(/\s+/g,'_') : ''}.pdf`;
+      await html2pdf().from(node).set({
+        margin: 10,
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).save();
+
+      if (node && node !== exportRef.current) {
+        node.remove();
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setMessages(prev => [...prev, { role: 'assistant', content: `Could not generate PDF: ${msg}` }] as ChatMessage[]);
+    }
+  }
 
   async function send(content?: string) {
     const userText = (content ?? input).trim();
@@ -107,7 +155,7 @@ const Itinerary = () => {
           </div>
 
           {/* Chat panel */}
-          <div className="md:col-span-2 bg-[#232526]/80 rounded-2xl border border-white/10 flex flex-col">
+          <div className="md:col-span-2 bg-[#232526]/80 rounded-2xl border border-white/10 flex flex-col" ref={exportRef}>
             <div ref={containerRef} className="flex-1 overflow-y-auto p-5 space-y-4">
               {messages.map((m, idx) => (
                 <div key={idx} className={`max-w-[85%] ${m.role === 'user' ? 'ml-auto text-right' : ''}`}>
@@ -131,6 +179,11 @@ const Itinerary = () => {
                 disabled={loading}
                 className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#e94560] to-[#f8b400] disabled:opacity-50"
               >Send</button>
+              <button
+                onClick={downloadPDF}
+                className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20"
+                title="Download latest itinerary as PDF"
+              >Download PDF</button>
             </div>
           </div>
         </div>
