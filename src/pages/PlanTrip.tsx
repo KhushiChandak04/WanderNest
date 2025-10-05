@@ -40,27 +40,14 @@ const PlanTrip = () => {
   }, [budget]);
 
   return (
-    <div
-      className="min-h-screen relative overflow-hidden flex flex-col items-center"
-      style={{
-        marginTop: '80px',
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundColor: "rgba(26,26,46,0.92)",
-        backgroundBlendMode: "overlay",
-        fontFamily: `'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif`,
-        color: "#f3f4f6"
-      }}
-    >
+    <div className="min-h-screen relative overflow-hidden flex flex-col items-center bg-background text-foreground" style={{ marginTop: '80px' }}>
       <div className="relative z-10 container mx-auto px-4 pt-16 flex flex-col items-center">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-[#1fd1f9] via-[#e94560] to-[#f8b400] bg-clip-text text-transparent drop-shadow-lg tracking-tight">
-            Plan Your Dream Trip
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-foreground tracking-tight">
+            Plan Your Trip
           </h1>
-          <p className="text-xl md:text-2xl text-[#e0e7ef] max-w-2xl mx-auto font-light">
+          <p className="text-xl md:text-2xl text-foreground max-w-2xl mx-auto font-light">
             Create unforgettable memories with our intuitive trip planning experience
           </p>
         </div>
@@ -78,29 +65,29 @@ const PlanTrip = () => {
                 }`}>
                   <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 shadow-lg ${
                     isCompleted 
-                      ? "bg-gradient-to-r from-[#1fd1f9] to-[#e94560]" 
+                      ? "bg-blue-500" 
                       : isActive 
-                        ? "bg-gradient-to-r from-[#1fd1f9] to-[#e94560]" 
-                        : "bg-[#232526]/80 backdrop-blur-sm"
+                        ? "bg-blue-400" 
+                        : "bg-blue-100"
                   }`}>
                     {isCompleted ? (
                       <Check className="w-7 h-7 text-white" />
                     ) : (
-                      <Icon className={`w-7 h-7 ${isActive ? "text-white" : "text-[#b6c2d1]"}`} />
+                      <Icon className={`w-7 h-7 ${isActive ? "text-white" : "text-blue-700"}`} />
                     )}
                   </div>
                   <span className={`mt-3 text-base font-semibold transition-colors duration-300 ${
-                    isActive ? "text-[#f8b400]" : isCompleted ? "text-[#1fd1f9]" : "text-[#b6c2d1]"
+                    isActive ? "text-blue-700" : isCompleted ? "text-blue-600" : "text-foreground/60"
                   }`}>
                     {s.label}
                   </span>
                   {isActive && (
-                    <div className="absolute -bottom-2 w-2 h-2 bg-[#f8b400] rounded-full animate-ping"></div>
+                    <div className="absolute -bottom-2 w-2 h-2 bg-blue-400 rounded-full animate-ping"></div>
                   )}
                 </div>
                 {idx < steps.length - 1 && (
                   <div className={`w-20 h-1 mx-4 rounded transition-all duration-500 ${
-                    step > idx ? "bg-gradient-to-r from-[#1fd1f9] to-[#e94560]" : "bg-[#232526]/80"
+                    step > idx ? "bg-blue-400" : "bg-blue-100"
                   }`}></div>
                 )}
               </div>
@@ -110,35 +97,35 @@ const PlanTrip = () => {
 
         {/* Main Form Container */}
         <div className="max-w-2xl mx-auto w-full">
-          <div className="bg-[#232526]/90 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-[#e94560]/30 transition-all duration-500 hover:shadow-3xl glassmorphism">
+          <div className="box-lightblue rounded-3xl p-10 shadow-soft transition-all duration-500 hover:shadow-strong">
             <div className="min-h-[400px] flex flex-col">
               
               {/* Step 0: Dates */}
               {step === 0 && (
                 <div className="space-y-8 animate-fade-in">
                   <div className="text-center mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-[#1fd1f9] to-[#e94560] bg-clip-text text-transparent">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-2 text-foreground">
                       When are you traveling?
                     </h2>
-                    <p className="text-[#b6c2d1]">Select your departure and return dates</p>
+                    <p className="text-foreground/70">Select your departure and return dates</p>
                   </div>
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <label className="block text-base font-semibold text-[#f8b400]">Departure Date</label>
+                      <label className="block text-base font-semibold text-blue-700">Departure Date</label>
                       <input 
                         type="date" 
                         value={formData.startDate}
                         onChange={(e) => updateFormData('startDate', e.target.value)}
-                        className="w-full p-4 rounded-xl bg-[#232526]/70 text-white border border-[#e94560]/60 focus:border-[#1fd1f9] focus:ring-2 focus:ring-[#1fd1f9]/50 transition-all duration-300 backdrop-blur-sm outline-none" 
+                        className="w-full p-4 rounded-xl bg-white text-foreground border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none" 
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="block text-base font-semibold text-[#f8b400]">Return Date</label>
+                      <label className="block text-base font-semibold text-blue-700">Return Date</label>
                       <input 
                         type="date" 
                         value={formData.endDate}
                         onChange={(e) => updateFormData('endDate', e.target.value)}
-                        className="w-full p-4 rounded-xl bg-[#232526]/70 text-white border border-[#e94560]/60 focus:border-[#1fd1f9] focus:ring-2 focus:ring-[#1fd1f9]/50 transition-all duration-300 backdrop-blur-sm outline-none" 
+                        className="w-full p-4 rounded-xl bg-white text-foreground border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none" 
                       />
                     </div>
                   </div>
@@ -149,19 +136,19 @@ const PlanTrip = () => {
               {step === 1 && (
                 <div className="space-y-8 animate-fade-in">
                   <div className="text-center mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-[#1fd1f9] to-[#e94560] bg-clip-text text-transparent">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-2 text-foreground">
                       Where to?
                     </h2>
-                    <p className="text-[#b6c2d1]">Choose your dream destination</p>
+                    <p className="text-foreground/70">Choose your dream destination</p>
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-base font-semibold text-[#f8b400]">Destination</label>
+                    <label className="block text-base font-semibold text-blue-700">Destination</label>
                     <input 
                       type="text" 
                       placeholder="e.g., Paris, Tokyo, New York..."
                       value={formData.destination}
                       onChange={(e) => updateFormData('destination', e.target.value)}
-                      className="w-full p-4 rounded-xl bg-[#232526]/70 text-white border border-[#e94560]/60 focus:border-[#1fd1f9] focus:ring-2 focus:ring-[#1fd1f9]/50 transition-all duration-300 backdrop-blur-sm placeholder-[#b6c2d1] outline-none" 
+                      className="w-full p-4 rounded-xl bg-white text-foreground border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-300 placeholder:text-foreground/50 outline-none" 
                     />
                   </div>
 
@@ -177,21 +164,21 @@ const PlanTrip = () => {
                         referrerPolicy="no-referrer-when-downgrade"
                       />
                     ) : (
-                      <div className="h-80 flex items-center justify-center text-center px-6 bg-gradient-to-br from-[#1fd1f9]/10 to-[#e94560]/10">
+                      <div className="h-80 flex items-center justify-center text-center px-6 box-lightblue">
                         <div>
-                          <MapPin className="w-12 h-12 text-[#1fd1f9] mx-auto mb-3" />
-                          <p className="text-[#b6c2d1]">Type a destination to see a live map preview</p>
+                          <MapPin className="w-12 h-12 text-blue-600 mx-auto mb-3" />
+                          <p className="text-foreground/70">Type a destination to see a live map preview</p>
                         </div>
                       </div>
                     )}
                     {formData.destination.trim().length > 1 && (
-                      <div className="p-3 bg-[#0b1220]/70 border-t border-[#e94560]/20 flex items-center justify-between">
-                        <span className="text-sm text-[#b6c2d1]">Preview of: <span className="text-white font-semibold">{formData.destination}</span></span>
+                      <div className="p-3 bg-white border-t border-blue-100 flex items-center justify-between">
+                        <span className="text-sm text-foreground/70">Preview of: <span className="text-foreground font-semibold">{formData.destination}</span></span>
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formData.destination)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-[#1fd1f9] hover:text-white underline"
+                          className="text-sm text-blue-700 hover:text-blue-900 underline"
                         >
                           Open in Maps
                         </a>
@@ -205,25 +192,25 @@ const PlanTrip = () => {
               {step === 2 && (
                 <div className="space-y-8 animate-fade-in">
                   <div className="text-center mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-[#1fd1f9] to-[#e94560] bg-clip-text text-transparent">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-2 text-foreground">
                       What's your budget?
                     </h2>
-                    <p className="text-[#b6c2d1]">Set your travel budget (INR)</p>
+                    <p className="text-foreground/70">Set your travel budget (INR)</p>
                   </div>
 
                   {/* Total Budget Display (INR) */}
                   <div className="space-y-6">
                     <div className="text-center">
-                      <div className="text-5xl font-extrabold text-[#f8b400] mb-2">
+                      <div className="text-5xl font-extrabold text-blue-600 mb-2">
                         {formatINR(budget)}
                       </div>
-                      <div className="text-[#b6c2d1]">Total Budget (INR)</div>
+                      <div className="text-foreground/70">Total Budget (INR)</div>
                     </div>
 
                     {/* Manual Budget Input (INR) */}
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="block text-base font-semibold text-[#f8b400]">Enter Budget (INR)</label>
+                        <label className="block text-base font-semibold text-blue-700">Enter Budget (INR)</label>
                         <input
                           type="number"
                           min={10000}
@@ -234,14 +221,14 @@ const PlanTrip = () => {
                             const val = Math.max(10000, Math.min(1000000, Number(e.target.value) || 0));
                             setBudget(val);
                           }}
-                          className="w-full p-4 rounded-xl bg-[#232526]/70 text-white border border-[#e94560]/60 focus:border-[#1fd1f9] focus:ring-2 focus:ring-[#1fd1f9]/50 transition-all duration-300 backdrop-blur-sm outline-none"
+                          className="w-full p-4 rounded-xl bg-white text-foreground border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none"
                         />
-                        <p className="text-xs text-[#b6c2d1]">Range: ₹10,000 – ₹10,00,000</p>
+                        <p className="text-xs text-foreground/70">Range: ₹10,000 – ₹10,00,000</p>
                       </div>
 
                       {/* Slider (INR) */}
                       <div className="space-y-2">
-                        <label className="block text-base font-semibold text-[#f8b400]">Adjust with Slider</label>
+                        <label className="block text-base font-semibold text-blue-700">Adjust with Slider</label>
                         <input
                           type="range"
                           min={10000}
@@ -251,7 +238,7 @@ const PlanTrip = () => {
                           onChange={e => setBudget(Number(e.target.value))}
                           className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                         />
-                        <div className="flex justify-between text-base text-[#b6c2d1]">
+                        <div className="flex justify-between text-base text-foreground/70">
                           <span>{formatINR(10000)}</span>
                           <span>{formatINR(1000000)}</span>
                         </div>
@@ -260,17 +247,17 @@ const PlanTrip = () => {
 
                     {/* Simple Allocation Preview (INR) */}
                     <div className="grid grid-cols-2 gap-4 mt-2">
-                      <div className="bg-[#232526]/70 rounded-xl p-4 text-center backdrop-blur-sm">
-                        <div className="text-2xl font-bold text-[#1fd1f9]">
+                      <div className="bg-white rounded-xl p-4 text-center border border-blue-100">
+                        <div className="text-2xl font-bold text-blue-600">
                           {formatINR(Math.round(budget * 0.4))}
                         </div>
-                        <div className="text-[#b6c2d1] text-sm">Accommodation (40%)</div>
+                        <div className="text-foreground/70 text-sm">Accommodation (40%)</div>
                       </div>
-                      <div className="bg-[#232526]/70 rounded-xl p-4 text-center backdrop-blur-sm">
-                        <div className="text-2xl font-bold text-[#e94560]">
+                      <div className="bg-white rounded-xl p-4 text-center border border-blue-100">
+                        <div className="text-2xl font-bold text-blue-600">
                           {formatINR(Math.round(budget * 0.3))}
                         </div>
-                        <div className="text-[#b6c2d1] text-sm">Activities (30%)</div>
+                        <div className="text-foreground/70 text-sm">Activities (30%)</div>
                       </div>
                     </div>
                   </div>
@@ -281,38 +268,38 @@ const PlanTrip = () => {
               {step === 3 && (
                 <div className="space-y-8 animate-fade-in">
                   <div className="text-center mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-[#1fd1f9] to-[#e94560] bg-clip-text text-transparent">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-2 text-foreground">
                       Any special requests?
                     </h2>
-                    <p className="text-[#b6c2d1]">Tell us about your preferences and requirements</p>
+                    <p className="text-foreground/70">Tell us about your preferences and requirements</p>
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-base font-semibold text-[#f8b400]">Additional Notes</label>
+                    <label className="block text-base font-semibold text-blue-700">Additional Notes</label>
                     <textarea 
                       rows={6}
                       placeholder="e.g., Vegetarian restaurants, accessibility needs, adventure activities, cultural experiences..."
                       value={formData.notes}
                       onChange={(e) => updateFormData('notes', e.target.value)}
-                      className="w-full p-4 rounded-xl bg-[#232526]/70 text-white border border-[#e94560]/60 focus:border-[#1fd1f9] focus:ring-2 focus:ring-[#1fd1f9]/50 transition-all duration-300 backdrop-blur-sm placeholder-[#b6c2d1] resize-none outline-none"
+                      className="w-full p-4 rounded-xl bg-white text-foreground border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-300 placeholder:text-foreground/50 resize-none outline-none"
                     />
                   </div>
-                  <div className="bg-gradient-to-br from-[#1fd1f9]/20 to-[#e94560]/20 rounded-2xl p-6 border border-[#e94560]/20 backdrop-blur-sm">
-                    <h3 className="font-bold text-[#1fd1f9] mb-3">Trip Summary</h3>
+                  <div className="box-lightblue rounded-2xl p-6">
+                    <h3 className="font-bold text-blue-700 mb-3">Trip Summary</h3>
                     <div className="space-y-2 text-base">
                       <div className="flex justify-between">
-                        <span className="text-[#b6c2d1]">Dates:</span>
+                        <span className="text-foreground/70">Dates:</span>
                         <span>{formData.startDate || 'Not set'} - {formData.endDate || 'Not set'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-[#b6c2d1]">Destination:</span>
+                        <span className="text-foreground/70">Destination:</span>
                         <span>{formData.destination || 'Not set'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-[#b6c2d1]">Budget:</span>
-                        <span className="text-[#f8b400] font-semibold">{formatINR(budget)}</span>
+                        <span className="text-foreground/70">Budget:</span>
+                        <span className="text-blue-700 font-semibold">{formatINR(budget)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-[#b6c2d1]">Currency:</span>
+                        <span className="text-foreground/70">Currency:</span>
                         <span>INR</span>
                       </div>
                     </div>
@@ -321,14 +308,14 @@ const PlanTrip = () => {
               )}
 
               {/* Navigation Buttons */}
-              <div className="flex justify-between items-center mt-10 pt-6 border-t border-[#e94560]/40">
+              <div className="flex justify-between items-center mt-10 pt-6 border-t border-blue-100">
                 <button 
                   onClick={prevStep}
                   disabled={step === 0}
                   className={`flex items-center gap-2 px-7 py-3 rounded-xl font-semibold transition-all duration-300 ${
                     step === 0 
                       ? "opacity-0 pointer-events-none" 
-                      : "bg-[#232526]/70 hover:bg-[#232526]/90 text-white backdrop-blur-sm hover:scale-105"
+                      : "bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-100 hover:scale-105"
                   }`}
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -340,7 +327,7 @@ const PlanTrip = () => {
                     <div
                       key={idx}
                       className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                        idx === step ? "bg-[#f8b400] w-8" : idx < step ? "bg-[#1fd1f9]" : "bg-white/30"
+                        idx === step ? "bg-blue-500 w-8" : idx < step ? "bg-blue-400" : "bg-blue-100"
                       }`}
                     />
                   ))}
@@ -358,7 +345,7 @@ const PlanTrip = () => {
                     };
                     navigate('/itinerary', { state: { trip } });
                   } : nextStep}
-                  className="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold bg-gradient-to-r from-[#1fd1f9] to-[#f8b400] hover:from-[#1fd1f9]/80 hover:to-[#f8b400]/80 text-white transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#1fd1f9]/25"
+                  className="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all duration-300 hover:scale-105 shadow-lg"
                 >
                   {step === steps.length - 1 ? "Start Planning!" : "Next"}
                   {step === steps.length - 1 ? <Check className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}

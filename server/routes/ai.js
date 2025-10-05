@@ -1,68 +1,60 @@
 import express from "express";
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // GET /api/ai/health
 router.get("/health", (req, res) => {
-  const groqKey = process.env.GROQ_API_KEY;
-  const xaiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
-  const provider = groqKey ? "groq" : (xaiKey ? "xai" : null);
-  res.json({ ok: true, provider, hasKey: Boolean(groqKey || xaiKey) });
+  const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
+  const groq = {
+    apiKeyPresent: Boolean(process.env.GROQ_API_KEY),
+    model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile'
+  };
+  const xai = {
+    apiKeyPresent: Boolean(process.env.XAI_API_KEY || process.env.GROK_API_KEY),
+    model: process.env.XAI_MODEL || 'grok-2-latest'
+  };
+  const ollama = {
+    baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
+    model: process.env.OLLAMA_MODEL || 'llama3.1'
+  };
+  res.json({ ok: true, provider, groq, xai, ollama });
 });
 
 // POST /api/ai/chat
-router.post("/chat", async (req, res) => {
+router.post("/chat", protect, async (req, res) => {
   try {
-    const groqKey = process.env.GROQ_API_KEY;
-    const xaiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
-    const provider = groqKey ? "groq" : (xaiKey ? "xai" : null);
+    const apiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
     const demo = process.env.AI_DEMO_FALLBACK === 'true';
     const { messages = [], trip } = req.body || {};
 
     // If demo mode is enabled, allow responses even without an API key
-    if (!provider && demo) {
+    if (!apiKey && demo) {
       const fallback = buildFallbackReply(messages, trip);
       return res.json({ choices: [{ message: { content: fallback } }] });
     }
-    if (!provider) {
+    if (!apiKey) {
       const fallback = buildFallbackReply(messages, trip);
       return res.json({ choices: [{ message: { content: fallback } }], meta: { demo: true, reason: "missing_api_key" } });
     }
 
     const systemPrompt = [
-      {
-        role: "system",
-        content:
-          "You are WanderNest's expert Indian travel planner. Create concise, actionable travel answers and itineraries. Always use INR for costs and show practical visa notes (not legal advice). Be specific with neighborhoods/areas."
-      },
-      {
-        role: "system",
-        content:
-          `Trip context (Indian national): ${JSON.stringify(trip || {}, null, 2)}\nIf destination missing, ask for it. Prefer family-friendly and dietary constraints from notes.`
-      }
+      { role: 'system', content: "You are WanderNest's expert Indian travel planner. Create concise, actionable travel answers and itineraries. Always use INR for costs and show practical visa notes (not legal advice). Be specific with neighborhoods/areas." },
+      { role: 'system', content: `Trip context (Indian national): ${JSON.stringify(trip || {}, null, 2)}\nIf destination missing, ask for it. Prefer family-friendly and dietary constraints from notes.` }
     ];
 
-    // Build payload compatible with OpenAI-style chat completions
-    const model = provider === 'groq'
-      ? (process.env.GROQ_MODEL || 'llama-3.1-70b-versatile')
-      : (process.env.XAI_MODEL || 'grok-4-latest');
     const payload = {
-      model,
+      model: "grok-4-latest",
       stream: false,
       temperature: 0.4,
       messages: [...systemPrompt, ...messages]
     };
 
-    const endpoint = provider === 'groq'
-      ? 'https://api.groq.com/openai/v1/chat/completions'
-      : 'https://api.x.ai/v1/chat/completions';
-    const key = provider === 'groq' ? groqKey : xaiKey;
-
-    const resp = await fetch(endpoint, {
+    const resp = await fetch("https://api.x.ai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`
+        Authorization: `Bearer ${apiKey}`
       },
       body: JSON.stringify(payload)
     });
@@ -83,9 +75,7 @@ router.post("/chat", async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error("/api/ai/chat error", err);
-    const { messages = [], trip } = req.body || {};
-    const fallback = buildFallbackReply(messages, trip);
-    return res.json({ choices: [{ message: { content: fallback } }], meta: { demo: true, reason: "exception" } });
+    return res.status(500).json({ error: "Unhandled server error", details: String(err?.message || err) });
   }
 });
 
@@ -114,6 +104,91 @@ function buildFallbackReply(messages = [], trip = {}) {
     '',
     `Request: "${lastUser}"`
   ].filter(Boolean).join('\n');
+}
+
+function toErr(e) {
+  try { return typeof e === 'string' ? e : (e?.message || JSON.stringify(e)); } catch { return 'unknown'; }
+}
+
+async function callXAI(messages) {
+  const apiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
+  if (!apiKey) {
+    const err = new Error('Missing XAI_API_KEY');
+    err.status = 401;
+    throw err;
+  }
+  const payload = {
+    model: process.env.XAI_MODEL || 'grok-2-latest',
+    stream: false,
+    temperature: 0.4,
+    messages
+  };
+  const resp = await fetch('https://api.x.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify(payload)
+  });
+  if (!resp.ok) {
+    const details = await safeRead(resp);
+    const err = new Error('x.ai upstream error');
+    err.status = resp.status;
+    err.details = details;
+    throw err;
+  }
+  return await resp.json();
+}
+
+async function callOllama(messages) {
+  const base = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
+  const model = process.env.OLLAMA_MODEL || 'llama3.1';
+  // Ollama chat API
+  const payload = { model, messages, stream: false, options: { temperature: 0.4 } };
+  const url = `${base.replace(/\/$/, '')}/api/chat`;
+  const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  if (!resp.ok) {
+    const details = await safeRead(resp);
+    const err = new Error('ollama error');
+    err.status = resp.status;
+    err.details = details;
+    throw err;
+  }
+  const data = await resp.json();
+  // Normalize to OpenAI-like shape
+  // Ollama returns { message: { role, content }, ... }
+  const content = data?.message?.content || '';
+  return { choices: [{ message: { content } }], meta: { provider: 'ollama', model } };
+}
+
+async function safeRead(resp) {
+  try { return await resp.json(); } catch { try { return await resp.text(); } catch { return null; } }
+}
+
+async function callGroq(messages) {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    const err = new Error('Missing GROQ_API_KEY');
+    err.status = 401;
+    throw err;
+  }
+  const payload = {
+    model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+    stream: false,
+    temperature: 0.4,
+    messages
+  };
+  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify(payload)
+  });
+  if (!resp.ok) {
+    const details = await safeRead(resp);
+    const err = new Error('groq upstream error');
+    err.status = resp.status;
+    err.details = details;
+    throw err;
+  }
+  return await resp.json();
 }
 
 export default router;

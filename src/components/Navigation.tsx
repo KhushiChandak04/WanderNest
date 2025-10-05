@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Plane, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -13,8 +14,21 @@ const Navigation = () => {
     { href: '/', label: 'Home' },
     { href: '/plan', label: 'Plan Your Trip' },
     { href: '/visa-guide', label: 'Visa Guide' },
-    { href: '/food-finder', label: 'Food Finder' },
   ];
+
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem('wandernest_token');
+      setIsAuthed(Boolean(token));
+    } catch {}
+  }, [location.pathname]);
+
+  const logout = () => {
+    try { localStorage.removeItem('wandernest_token'); } catch {}
+    setIsAuthed(false);
+    // simple client-side redirect
+    window.location.href = '/';
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glassmorphism backdrop-blur-lg">
@@ -22,8 +36,8 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 hover:scale-105 transition-transform duration-300">
-            <Plane className="h-8 w-8 text-primary" />
-            <span className="font-playfair text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <Plane className="h-8 w-8 text-blue-700" />
+            <span className="font-playfair text-2xl font-bold text-foreground">
               WanderNest
             </span>
           </Link>
@@ -45,16 +59,24 @@ const Navigation = () => {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login">
-              <Button variant="ghost" size="sm" className="hover:bg-primary/10">
-                Login
+            {!isAuthed ? (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button className="cta-button text-sm px-6 py-2">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={logout} className="hover:bg-primary/10">
+                Logout
               </Button>
-            </Link>
-            <Link to="/register">
-              <Button className="cta-button text-sm px-6 py-2">
-                Sign Up
-              </Button>
-            </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -88,17 +110,25 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <User className="h-4 w-4 mr-2" />
-                    Login
+                {!isAuthed ? (
+                  <>
+                    <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start">
+                        <User className="h-4 w-4 mr-2" />
+                        Login
+                      </Button>
+                    </Link>
+                    <Link to="/register" onClick={() => setIsMenuOpen(false)}>
+                      <Button className="w-full cta-button">
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </>
+                ) : (
+                  <Button variant="ghost" className="w-full justify-start" onClick={logout}>
+                    Logout
                   </Button>
-                </Link>
-                <Link to="/register" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full cta-button">
-                    Sign Up
-                  </Button>
-                </Link>
+                )}
               </div>
             </div>
           </div>

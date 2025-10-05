@@ -1,4 +1,4 @@
-import { supabase } from "../config/db.js";
+import { supabase, connectDB } from "../config/db.js";
 
 export const protect = async (req, res, next) => {
   let token;
@@ -14,7 +14,11 @@ export const protect = async (req, res, next) => {
 
   try {
     if (!supabase) {
-      return res.status(500).json({ message: "Supabase not configured" });
+      // Lazy initialize if server startup is still warming
+      try { await connectDB(); } catch {}
+    }
+    if (!supabase) {
+      return res.status(503).json({ message: "Auth temporarily unavailable" });
     }
 
     // Validate the JWT via Supabase

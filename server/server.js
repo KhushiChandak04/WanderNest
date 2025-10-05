@@ -6,7 +6,6 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import { connectDB, dbHealth } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
-import tripRoutes from "./routes/tripRoutes.js";
 import aiRoutes from "./routes/ai.js";
 import "./polyfills/fetch.js";
 
@@ -60,35 +59,34 @@ app.get("/", (_req, res) => {
   res.send("WanderNest API is running…");
 });
 
-// Auth routes
+// Auth routes (Supabase-backed)
 app.use("/api/auth", authRoutes);
-// Trip & Itinerary routes
-app.use("/api", tripRoutes);
 // AI proxy routes
 app.use("/api/ai", aiRoutes);
 
-// Start server after Supabase init; default 5000 to match frontend config
-const startServer = async () => {
-  try {
-    await connectDB();
-    const PORT = Number(process.env.PORT) || 5000;
-    const serverInstance = app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+// Start server without DB (prefer 5050 to avoid conflicts with other dev services)
+let desiredPort = Number(process.env.PORT) || 5050;
+if (Number(process.env.PORT) === 5000) {
+  console.warn("⚠️ PORT=5000 is busy in your environment. Starting on 5050 instead.");
+  desiredPort = 5050;
+}
+
+// Initialize Supabase (non-blocking)
+try { connectDB(); } catch {}
+
+const serverInstance = app.listen(desiredPort, () => {
+  console.log(`🚀 Server running on http://localhost:${desiredPort}`);
+});
+
+serverInstance.on('error', (err) => {
+  if (err && (err.code === 'EADDRINUSE' || err.code === 'EACCES')) {
+    const fallback = desiredPort + 1;
+    console.warn(`⚠️ Port ${desiredPort} unavailable (${err.code}). Retrying on ${fallback}…`);
+    app.listen(fallback, () => {
+      console.log(`🚀 Server running on http://localhost:${fallback}`);
     });
-    serverInstance.on("error", (err) => {
-      if (err && (err.code === "EADDRINUSE" || err.code === "EACCES")) {
-        const fallback = PORT + 1;
-        console.warn(`⚠️ Port ${PORT} unavailable (${err.code}). Retrying on ${fallback}…`);
-        app.listen(fallback, () => {
-          console.log(`🚀 Server running on http://localhost:${fallback}`);
-        });
-      } else {
-        console.error("Server failed to start:", err);
-        process.exit(1);
-      }
-    });
-  } catch (error) {
-    console.error("❌ Failed to start server:", error?.message || error);
+  } else {
+    console.error('Server failed to start:', err);
     process.exit(1);
   }
 };

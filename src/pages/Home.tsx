@@ -92,9 +92,9 @@ const Home = () => {
 
   return (
     <div
-      className="min-h-screen text-white overflow-x-hidden relative"
+      className="min-h-screen text-foreground overflow-x-hidden relative bg-background"
       style={{
-        backgroundImage: `linear-gradient(rgba(26,26,46,0.85), rgba(26,26,46,0.85)), url(${bgImage})`,
+        backgroundImage: `linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.65)), url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
@@ -110,8 +110,8 @@ const Home = () => {
           style={{ y }}
           className="absolute inset-0 w-full h-full"
         >
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop')] bg-cover bg-center opacity-20"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e]/90 via-[#16213e]/85 to-[#0f3460]/90"></div>
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop')] bg-cover bg-center opacity-10"></div>
+          <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }}></div>
         </motion.div>
         
         <motion.div
@@ -127,14 +127,12 @@ const Home = () => {
             className="mb-6"
           >
             <br></br>
-            <span className="inline-block bg-gradient-to-r from-[#e94560] to-[#f8b400] text-transparent bg-clip-text text-lg font-semibold mb-4">
+            <span className="inline-block text-foreground text-lg font-semibold mb-4">
               ✨ Your Journey Begins Here
             </span>
             <h1 className="text-4xl md:text-7xl font-extrabold mb-6 leading-tight">
               Explore the World,<br />
-              <span className="bg-gradient-to-r from-[#1fd1f9] via-[#b621fe] to-[#e94560] text-transparent bg-clip-text">
-                One Nest at a Time
-              </span>
+              <span className="text-foreground">One Nest at a Time</span>
               <span className="ml-4">🌌</span>
             </h1>
           </motion.div>
@@ -143,7 +141,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-xl md:text-2xl text-gray-300 max-w-3xl mb-4 font-light leading-relaxed"
+            className="text-xl md:text-2xl text-foreground max-w-3xl mb-4 font-light leading-relaxed"
           >
             Discover extraordinary destinations with intelligent planning, local insights, and seamless experiences. 
             From visa assistance to hidden gems, we make every journey unforgettable.
@@ -153,7 +151,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
-            className="text-lg text-gray-400 max-w-2xl mb-10"
+            className="text-lg text-foreground max-w-2xl mb-10"
           >
             Join thousands of travelers who trust WanderNest to turn their dream destinations into reality.
           </motion.p>
@@ -165,7 +163,7 @@ const Home = () => {
             className="flex flex-col sm:flex-row gap-6 mb-16"
           >
             <button
-              className="group bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-bold py-4 px-8 rounded-2xl shadow-2xl transition-all duration-300 text-lg transform hover:scale-105 hover:shadow-[#e94560]/50"
+              className="group bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-2xl shadow-2xl transition-all duration-300 text-lg transform hover:scale-105"
               onClick={() => navigate("/plan")}
             >
               <span className="flex items-center gap-2">
@@ -208,10 +206,10 @@ const Home = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Why Choose <span className="text-[#e94560]">WanderNest</span>?
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
+              Why Choose <span className="text-foreground">WanderNest</span>?
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-foreground max-w-3xl mx-auto leading-relaxed">
               We're not just another travel website. We're your intelligent travel companion, 
               combining cutting-edge technology with human expertise to create extraordinary journeys.
             </p>
@@ -225,11 +223,11 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 whileHover={{ scale: 1.05, rotateY: 5 }}
-                className="bg-gradient-to-br from-[#232526]/80 to-[#414345]/60 rounded-3xl p-8 backdrop-blur-sm border border-white/10 shadow-xl hover:shadow-2xl hover:shadow-[#e94560]/20 transition-all duration-300"
+                className="feature-card rounded-3xl p-8 shadow-soft hover:shadow-strong transition-all duration-300"
               >
                 <div className="text-5xl mb-4">{card.icon}</div>
-                <h3 className="font-bold text-xl mb-3 text-white">{card.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{card.desc}</p>
+                <h3 className="font-bold text-xl mb-3 text-foreground">{card.title}</h3>
+                <p className="text-foreground leading-relaxed">{card.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -244,10 +242,10 @@ const Home = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Trending <span className="text-[#b621fe]">Destinations</span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
+              Trending <span className="text-foreground">Destinations</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-foreground max-w-3xl mx-auto">
               Discover the world's most captivating destinations, carefully curated for unforgettable experiences. 
               From bustling cities to serene landscapes, find your perfect escape.
             </p>
@@ -261,7 +259,7 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 whileHover={{ scale: 1.03, rotateY: 2 }}
-                className="group relative bg-gradient-to-br from-[#232526]/80 to-[#414345]/60 rounded-3xl overflow-hidden shadow-2xl hover:shadow-[#1fd1f9]/30 transition-all duration-500"
+                className="group relative feature-card rounded-3xl overflow-hidden shadow-soft hover:shadow-strong transition-all duration-500"
               >
                 <div className="relative overflow-hidden">
                   <img 
@@ -275,7 +273,7 @@ const Home = () => {
                       target.onerror = null; // prevent infinite loop
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                   <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-semibold">
                     {formatINR(d.costINR)}
                   </div>
@@ -290,12 +288,12 @@ const Home = () => {
                     <span className="text-3xl">{d.icon}</span>
                   </div>
                   
-                  <p className="text-gray-300 mb-4 text-sm">
+                  <p className="text-foreground mb-4 text-sm">
                     Discover the magic of {d.name} with carefully crafted experiences that blend culture, adventure, and relaxation.
                   </p>
                   
                   <button
-                    className="w-full bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
                     onClick={() => navigate("/plan")}
                   >
                     Explore {d.name}
@@ -325,10 +323,10 @@ const Home = () => {
               <MapPin className="w-4 h-4 mr-2 text-[#1fd1f9]" />
               About WanderNest
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-4">
-              Built for <span className="bg-gradient-to-r from-[#1fd1f9] via-[#b621fe] to-[#e94560] bg-clip-text text-transparent">Indian travelers</span>, loved worldwide
+            <h2 className="text-4xl md:text-5xl font-bold mt-4 text-foreground">
+              Built for <span className="text-foreground font-semibold">Indian travelers</span>, loved worldwide
             </h2>
-            <p className="text-gray-300 max-w-3xl mx-auto mt-4">
+            <p className="text-foreground max-w-3xl mx-auto mt-4">
               We blend intuitive design with practical features—visa guidance, local insights, smart budgeting in INR, and curated stays—to turn your dream trips into reality.
             </p>
           </motion.div>
@@ -336,39 +334,39 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#1fd1f9]/10 transition"
+              className="feature-card rounded-2xl p-6 hover:shadow-strong transition"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-[#1fd1f9] to-[#e94560] mb-4">
                 <Target className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-2xl font-semibold mb-2">Our Mission</h3>
-              <p className="text-gray-300">
+              <p className="text-foreground">
                 Make global travel simple, stress‑free, and personal with thoughtful tools and seamless experiences.
               </p>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#e94560]/10 transition"
+              className="feature-card rounded-2xl p-6 hover:shadow-strong transition"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-[#e94560] to-[#f8b400] mb-4">
                 <ShieldCheck className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-2xl font-semibold mb-2">What We Offer</h3>
-              <p className="text-gray-300">
+              <p className="text-foreground">
                 Trip planning, visa help, food discovery, INR budgets, and tailor‑made itineraries—everything in one place.
               </p>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#f8b400]/10 transition"
+              className="feature-card rounded-2xl p-6 hover:shadow-strong transition"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-[#b621fe] to-[#1fd1f9] mb-4">
                 <Handshake className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-2xl font-semibold mb-2">Why Choose Us</h3>
-              <p className="text-gray-300">
+              <p className="text-foreground">
                 India‑first details, clean design, and real‑world convenience that saves your time and money.
               </p>
             </motion.div>
@@ -390,60 +388,60 @@ const Home = () => {
               <Phone className="w-4 h-4 mr-2 text-[#f8b400]" />
               Contact Us
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-4">
-              We’re here to <span className="bg-gradient-to-r from-[#e94560] to-[#f8b400] bg-clip-text text-transparent">help</span>
+            <h2 className="text-4xl md:text-5xl font-bold mt-4 text-foreground">
+              We’re here to <span className="text-foreground">help</span>
             </h2>
-            <p className="text-gray-300 max-w-2xl mx-auto mt-4">
+            <p className="text-foreground max-w-2xl mx-auto mt-4">
               Questions, feedback, or partnerships—reach out and we’ll get back within 24 hours on business days.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#1fd1f9]/10 transition">
+            <div className="feature-card rounded-2xl p-6 hover:shadow-strong transition">
               <Mail className="w-6 h-6 text-[#1fd1f9] mb-3" />
               <h3 className="text-lg font-semibold mb-1">Support</h3>
-              <p className="text-gray-300 text-sm mb-2">Mon–Fri, 9:00 AM – 6:00 PM IST</p>
+              <p className="text-foreground text-sm mb-2">Mon–Fri, 9:00 AM – 6:00 PM IST</p>
               <a href="mailto:support@wandernest.com" className="text-[#1fd1f9] hover:text-white underline">
                 support@wandernest.com
               </a>
             </div>
 
-            <div className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#e94560]/10 transition">
+            <div className="feature-card rounded-2xl p-6 hover:shadow-strong transition">
               <Handshake className="w-6 h-6 text-[#e94560] mb-3" />
               <h3 className="text-lg font-semibold mb-1">Partnerships</h3>
-              <p className="text-gray-300 text-sm mb-2">Collaborate with WanderNest</p>
+              <p className="text-foreground text-sm mb-2">Collaborate with WanderNest</p>
               <a href="mailto:partners@wandernest.com" className="text-[#e94560] hover:text-white underline">
                 partners@wandernest.com
               </a>
             </div>
 
-            <div className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#b621fe]/10 transition">
+            <div className="feature-card rounded-2xl p-6 hover:shadow-strong transition">
               <ShieldCheck className="w-6 h-6 text-[#b621fe] mb-3" />
               <h3 className="text-lg font-semibold mb-1">Press</h3>
-              <p className="text-gray-300 text-sm mb-2">Media & PR inquiries</p>
+              <p className="text-foreground text-sm mb-2">Media & PR inquiries</p>
               <a href="mailto:press@wandernest.com" className="text-[#b621fe] hover:text-white underline">
                 press@wandernest.com
               </a>
             </div>
 
-            <div className="glassmorphism bg-[#232526]/70 rounded-2xl p-6 border border-white/10 hover:shadow-2xl hover:shadow-[#f8b400]/10 transition">
+            <div className="feature-card rounded-2xl p-6 hover:shadow-strong transition">
               <MapPin className="w-6 h-6 text-[#f8b400] mb-3" />
               <h3 className="text-lg font-semibold mb-1">Social</h3>
-              <p className="text-gray-300 text-sm mb-2">Follow our journey</p>
+              <p className="text-foreground text-sm mb-2">Follow our journey</p>
               <div className="flex gap-3">
-                <a className="text-[#f8b400] hover:text-white underline" href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
-                <span className="text-gray-500">•</span>
-                <a className="text-[#1fd1f9] hover:text-white underline" href="https://twitter.com" target="_blank" rel="noreferrer">Twitter</a>
-                <span className="text-gray-500">•</span>
-                <a className="text-[#b621fe] hover:text-white underline" href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+                <a className="text-[#f8b400] hover:text-foreground underline" href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+                <span className="text-foreground">•</span>
+                <a className="text-[#1fd1f9] hover:text-foreground underline" href="https://twitter.com" target="_blank" rel="noreferrer">Twitter</a>
+                <span className="text-foreground">•</span>
+                <a className="text-[#b621fe] hover:text-foreground underline" href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
               </div>
             </div>
           </div>
 
           {/* Contact CTA */}
           <div className="mt-10 text-center">
-            <div className="glassmorphism bg-gradient-to-r from-[#1fd1f9]/10 via-[#b621fe]/10 to-[#e94560]/10 rounded-2xl p-8 max-w-3xl mx-auto border border-white/10">
-              <p className="text-gray-300">
+            <div className="feature-card rounded-2xl p-8 max-w-3xl mx-auto">
+              <p className="text-foreground">
                 Prefer email? Write to us at{" "}
                 <a href="mailto:hello@wandernest.com" className="text-[#1fd1f9] hover:text-white underline">
                   hello@wandernest.com
@@ -456,17 +454,17 @@ const Home = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-gradient-to-r from-[#232526]/30 to-[#414345]/30">
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              What Our <span className="text-[#f8b400]">Travelers Say</span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
+              What Our <span className="text-foreground">Travelers Say</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-foreground max-w-3xl mx-auto">
               Don't just take our word for it. Hear from fellow adventurers who've transformed their travel dreams into reality with WanderNest.
             </p>
           </motion.div>
@@ -477,7 +475,7 @@ const Home = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
-              className="bg-gradient-to-br from-[#232526]/80 to-[#414345]/60 rounded-3xl p-8 md:p-12 text-center backdrop-blur-sm border border-white/10 shadow-2xl"
+              className="feature-card rounded-3xl p-8 md:p-12 text-center shadow-2xl"
             >
               <div className="flex justify-center mb-4">
                 {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
@@ -485,7 +483,7 @@ const Home = () => {
                 ))}
               </div>
               
-              <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed font-light">
+              <p className="text-xl md:text-2xl text-foreground mb-8 leading-relaxed font-light">
                 "{testimonials[currentTestimonial].text}"
               </p>
               
@@ -497,7 +495,7 @@ const Home = () => {
                 />
                 <div className="text-left">
                   <div className="font-bold text-lg">{testimonials[currentTestimonial].name}</div>
-                  <div className="text-gray-400">{testimonials[currentTestimonial].location}</div>
+                  <div className="text-foreground">{testimonials[currentTestimonial].location}</div>
                 </div>
               </div>
             </motion.div>
@@ -509,7 +507,7 @@ const Home = () => {
                   key={idx}
                   onClick={() => setCurrentTestimonial(idx)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    idx === currentTestimonial ? 'bg-[#e94560] scale-125' : 'bg-white/30 hover:bg-white/50'
+                    idx === currentTestimonial ? 'bg-primary scale-125' : 'bg-primary/30 hover:bg-primary/50'
                   }`}
                 />
               ))}
@@ -526,17 +524,17 @@ const Home = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className="max-w-4xl mx-auto"
           >
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">
-              Ready to Start Your <span className="bg-gradient-to-r from-[#e94560] to-[#f8b400] text-transparent bg-clip-text">Adventure</span>?
+            <h2 className="text-4xl md:text-6xl font-bold mb-6 text-foreground">
+              Ready to Start Your <span className="text-foreground">Adventure</span>?
             </h2>
-            <p className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed">
+            <p className="text-xl md:text-2xl text-foreground mb-12 leading-relaxed">
               Join millions of travelers who trust WanderNest to make their journeys extraordinary. 
               Your next adventure is just one click away.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <button
-                className="group bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-bold py-4 px-12 rounded-2xl shadow-2xl transition-all duration-300 text-xl transform hover:scale-105 hover:shadow-[#e94560]/50"
+                className="group bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-12 rounded-2xl shadow-2xl transition-all duration-300 text-xl transform hover:scale-105"
                 onClick={() => navigate("/plan")}
               >
                 <span className="flex items-center gap-3">
@@ -545,7 +543,7 @@ const Home = () => {
                 </span>
               </button>
               
-              <div className="flex items-center gap-4 text-gray-300">
+              <div className="flex items-center gap-4 text-foreground">
                 <span>✓ Free to start</span>
                 <span>✓ No credit card required</span>
               </div>
@@ -563,7 +561,7 @@ const Home = () => {
         transition={{ delay: 0.8 }}
         whileHover={{ scale: 1.08 }}
         aria-label="Open FAQs"
-        className={`fixed bottom-8 right-8 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-[60] ${showFAQ ? "bg-[#0b1220] border border-[#f8b400]/50" : "bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:shadow-[#e94560]/50"}`}
+        className={`fixed bottom-8 right-8 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-[60] ${showFAQ ? "bg-blue-50 border border-blue-100" : "bg-blue-600 hover:bg-blue-500 text-white"}`}
         onClick={() => setShowFAQ((v) => !v)}
       >
         {showFAQ ? "✖" : "💬"}
@@ -575,24 +573,24 @@ const Home = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.98 }}
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
-          className="fixed bottom-28 right-8 w-[92vw] sm:w-[480px] max-h-[70vh] overflow-hidden rounded-2xl bg-[#0b1220]/95 backdrop-blur-xl border border-white/10 shadow-2xl z-[55]"
+          className="fixed bottom-28 right-8 w-[92vw] sm:w-[480px] max-h-[70vh] overflow-hidden rounded-2xl bg-blue-50 backdrop-blur-xl border border-blue-100 shadow-2xl z-[55]"
           role="dialog"
           aria-label="Frequently Asked Questions"
         >
-          <div className="p-5 border-b border-white/10 flex items-center justify-between">
+          <div className="p-5 border-b border-blue-100 flex items-center justify-between">
             <div>
               <h3 className="text-xl font-bold">International Travel FAQs</h3>
-              <p className="text-sm text-gray-400">For Indian nationals — visas, funds, and travel basics</p>
+              <p className="text-sm text-foreground">For Indian nationals — visas, funds, and travel basics</p>
             </div>
             <button
               onClick={() => setShowFAQ(false)}
-              className="text-gray-300 hover:text-white text-lg"
+              className="text-foreground hover:opacity-80 text-lg"
               aria-label="Close"
             >
               ✖
             </button>
           </div>
-          <div className="p-5 overflow-y-auto max-h-[60vh] space-y-4">
+          <div className="p-5 overflow-y-auto max-h-[60vh] space-y-4 text-foreground">
             {/* General FAQs (technical and high-value) */}
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="faq-1">
@@ -653,64 +651,148 @@ const Home = () => {
 
             {/* Destination-specific snippets */}
             <div className="mt-2 space-y-2">
-              <div className="text-sm text-gray-400">Popular destinations quick notes</div>
+              <div className="text-sm text-foreground">Popular destinations quick notes</div>
               <Accordion type="multiple" className="w-full">
                 <AccordionItem value="schengen">
                   <AccordionTrigger className="text-left">Schengen (France, Italy, etc.)</AccordionTrigger>
                   <AccordionContent>
                     Type C tourist visa. Include itinerary, proof of stay, insurance of €30,000+, and funds. Biometrics required. Apply where you spend most nights or first entry if equal. Processing ~15–30 days.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          VFS Global (India Schengen centers):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.vfsglobal.com/en/individuals/index.html" target="_blank" rel="noopener noreferrer">vfsglobal.com</a>
+                        </li>
+                        <li>
+                          EU Visa policy (official):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://visa.europa.eu/" target="_blank" rel="noopener noreferrer">visa.europa.eu</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="japan">
                   <AccordionTrigger className="text-left">Japan</AccordionTrigger>
                   <AccordionContent>
                     Submit itinerary, stay proof, financials, and employment docs. No on‑arrival visa; apply via VFS/consulate. Processing typically 5–10 working days.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          Embassy of Japan in India:
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.in.emb-japan.go.jp/itpr_en/visa.html" target="_blank" rel="noopener noreferrer">in.emb-japan.go.jp</a>
+                        </li>
+                        <li>
+                          VFS Japan (India):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://visa.vfsglobal.com/ind/en/jpn/" target="_blank" rel="noopener noreferrer">visa.vfsglobal.com/ind/en/jpn</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="uk">
                   <AccordionTrigger className="text-left">United Kingdom</AccordionTrigger>
                   <AccordionContent>
                     Online form, biometrics, and supporting docs. Standard visitor visas take ~2–6+ weeks. Priority/super priority services are available in select centers.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          GOV.UK visas and immigration:
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.gov.uk/standard-visitor" target="_blank" rel="noopener noreferrer">gov.uk/standard-visitor</a>
+                        </li>
+                        <li>
+                          VFS UK (India):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://visa.vfsglobal.com/ind/en/gbr/" target="_blank" rel="noopener noreferrer">visa.vfsglobal.com/ind/en/gbr</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="usa">
                   <AccordionTrigger className="text-left">United States</AccordionTrigger>
                   <AccordionContent>
                     B1/B2: DS‑160, fee, VAC + interview. Long wait times common—book months ahead. Strengthen ties to India and ensure document consistency.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          U.S. Dept. of State (Visitor Visas):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://travel.state.gov/content/travel/en/us-visas/tourism-visit/visitor.html" target="_blank" rel="noopener noreferrer">travel.state.gov</a>
+                        </li>
+                        <li>
+                          U.S. Visa appointment (India):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.ustraveldocs.com/in/" target="_blank" rel="noopener noreferrer">ustraveldocs.com/in</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="bali">
                   <AccordionTrigger className="text-left">Bali (Indonesia)</AccordionTrigger>
                   <AccordionContent>
                     Visa on Arrival (VoA) available for tourism. Carry return/onward tickets, hotel proof, and sufficient funds. Rules change often—verify latest policies.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          Indonesian Immigration (eVisa/VoA info):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.imigrasi.go.id/en/" target="_blank" rel="noopener noreferrer">imigrasi.go.id</a>
+                        </li>
+                        <li>
+                          Official e-Visa portal (Indonesia):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://molina.imigrasi.go.id/" target="_blank" rel="noopener noreferrer">molina.imigrasi.go.id</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="uae">
                   <AccordionTrigger className="text-left">UAE (Dubai, Abu Dhabi)</AccordionTrigger>
                   <AccordionContent>
                     Tourist e‑visas via authorized partners/airlines. Ensure hotel booking, return ticket, and funds. Processing is usually quick (2–5 working days).
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          ICP UAE (Federal Authority for Identity, Citizenship, Customs & Ports Security):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://icp.gov.ae/en/" target="_blank" rel="noopener noreferrer">icp.gov.ae</a>
+                        </li>
+                        <li>
+                          GDRFA Dubai (for Dubai-sponsored visas):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.gdrfad.gov.ae/en" target="_blank" rel="noopener noreferrer">gdrfad.gov.ae</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="thailand">
                   <AccordionTrigger className="text-left">Thailand</AccordionTrigger>
                   <AccordionContent>
                     Indians can apply for e‑visa/e‑VOA depending on policy. Keep return tickets, stay proof, and funds. Processing times vary; check official channels.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          Thailand e-Visa (official):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://thaievisa.go.th/" target="_blank" rel="noopener noreferrer">thaievisa.go.th</a>
+                        </li>
+                        <li>
+                          Airports of Thailand (e-VOA partner info):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.immigration.go.th/en/" target="_blank" rel="noopener noreferrer">immigration.go.th</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
             </div>
 
-            <div className="pt-2 text-sm text-gray-400">
+            <div className="pt-2 text-sm text-foreground">
               Tip: Rules change often. Always verify on official embassy sites or trusted VFS pages before applying.
             </div>
-            <div className="pt-1">
-              <button
-                className="w-full bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-semibold py-2.5 rounded-xl shadow-lg transition-all duration-300"
-                onClick={() => navigate("/visa-guide")}
-              >
-                Open Visa Guide
-              </button>
-            </div>
+            {/* Removed Visa Guide shortcut as requested */}
           </div>
         </motion.aside>
       )}
