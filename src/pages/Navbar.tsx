@@ -55,8 +55,8 @@ const Navbar = () => {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled 
-          ? 'bg-[#1a1a2e]/95 backdrop-blur-xl border-b border-[#e94560]/20 shadow-2xl' 
-          : 'bg-[#1a1a2e]/80' // Fix: always use a dark background when not scrolled
+          ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-soft' 
+          : 'bg-white/60 backdrop-blur-md'
       }`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
@@ -64,13 +64,13 @@ const Navbar = () => {
             {/* Logo */}
             <div className="flex items-center space-x-3 group cursor-pointer">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#1fd1f9] to-[#e94560] rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-[#1fd1f9]/50">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-200 to-pink-200 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg">
                   <Plane className="w-6 h-6 text-white transform group-hover:rotate-12 transition-transform duration-300" />
                 </div>
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#e94560] rounded-full animate-pulse"></div>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-[#1fd1f9] to-[#e94560] bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-pink-500 bg-clip-text text-transparent">
                   WanderNest
                 </h1>
                 <p className="text-xs text-gray-400 -mt-1">Travel Beyond Limits</p>
@@ -78,7 +78,7 @@ const Navbar = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
+            <div className="hidden lg:flex items-center space-x-1 text-foreground">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeSection === item.href.slice(1);
@@ -89,12 +89,12 @@ const Navbar = () => {
                     onClick={() => scrollToSection(item.href)}
                     className={`relative flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 group ${
                       isActive
-                        ? 'bg-gradient-to-r from-[#1fd1f9]/20 to-[#e94560]/20 text-[#1fd1f9] shadow-lg'
-                        : 'text-gray-300 hover:text-white hover:bg-white/5'
+                        ? 'bg-blue-100 text-blue-700 shadow-soft'
+                        : 'text-gray-700 hover:text-blue-700 hover:bg-blue-50'
                     }`}
                   >
                     <Icon className={`w-4 h-4 transition-all duration-300 ${
-                      isActive ? 'text-[#1fd1f9]' : 'group-hover:text-[#1fd1f9]'
+                      isActive ? 'text-blue-600' : 'group-hover:text-blue-600'
                     }`} />
                     <span className="hidden xl:block">{item.label}</span>
                     
@@ -110,13 +110,13 @@ const Navbar = () => {
             <div className="hidden sm:flex items-center space-x-4">
               <button
                 onClick={() => navigate('/login')}
-                className="px-6 py-3 bg-gradient-to-r from-[#1fd1f9] to-[#e94560] text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#1fd1f9]/50"
+                className="px-6 py-3 bg-blue-600/80 hover:bg-blue-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-soft"
               >
                 Login
               </button>
               <button
                 onClick={() => navigate('/register')}
-                className="px-6 py-3 bg-gradient-to-r from-[#e94560] to-[#f8b400] text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#e94560]/50"
+                className="px-6 py-3 bg-pink-500/80 hover:bg-pink-500 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-soft"
               >
                 Sign Up
               </button>
@@ -125,7 +125,7 @@ const Navbar = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-3 rounded-xl bg-[#232526]/80 backdrop-blur-sm border border-[#e94560]/30 transition-all duration-300 hover:bg-[#232526] hover:scale-105"
+              className="lg:hidden p-3 rounded-xl bg-white/70 backdrop-blur-sm border border-gray-200 transition-all duration-300 hover:bg-white hover:scale-105"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6 text-[#1fd1f9]" />
@@ -136,7 +136,7 @@ const Navbar = () => {
           </div>
         </div>
         {/* Mobile Menu Overlay */}
-        <div className={`lg:hidden fixed inset-0 bg-[#1a1a2e]/95 backdrop-blur-xl transition-all duration-500 ${
+  <div className={`lg:hidden fixed inset-0 bg-white/95 backdrop-blur-xl transition-all duration-500 ${
           isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`} style={{ top: '80px' }}>
           <div className="container mx-auto px-4 py-8">

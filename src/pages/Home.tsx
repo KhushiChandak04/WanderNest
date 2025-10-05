@@ -92,9 +92,9 @@ const Home = () => {
 
   return (
     <div
-      className="min-h-screen text-white overflow-x-hidden relative"
+      className="min-h-screen text-foreground overflow-x-hidden relative bg-background"
       style={{
-        backgroundImage: `linear-gradient(rgba(26,26,46,0.85), rgba(26,26,46,0.85)), url(${bgImage})`,
+        backgroundImage: `linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.65)), url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
@@ -110,8 +110,8 @@ const Home = () => {
           style={{ y }}
           className="absolute inset-0 w-full h-full"
         >
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop')] bg-cover bg-center opacity-20"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e]/90 via-[#16213e]/85 to-[#0f3460]/90"></div>
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop')] bg-cover bg-center opacity-10"></div>
+          <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }}></div>
         </motion.div>
         
         <motion.div

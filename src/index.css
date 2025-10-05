@@ -6,59 +6,59 @@
 
 @layer base {
   :root {
-    /* Brand Colors - Sky blue + Earthy tones */
-    --background: 0 0% 100%;
-    --foreground: 213 31% 91%;
+    /* Coffee & Parchment Light Theme */
+    --background: 36 45% 94%; /* parchment beige */
+    --foreground: 24 30% 18%; /* deep coffee text */
     
     /* Primary - Sky Blue */
-    --primary: 210 100% 65%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 210 100% 75%;
+  --primary: 25 45% 45%; /* warm coffee brown */
+  --primary-foreground: 36 45% 94%; /* on coffee */
+  --primary-glow: 25 45% 60%;
     
     /* Secondary - Soft Earth */
-    --secondary: 25 85% 95%;
-    --secondary-foreground: 25 85% 25%;
+  --secondary: 35 50% 88%; /* soft latte */
+  --secondary-foreground: 24 30% 20%;
     
     /* Accent - Warm Orange */
-    --accent: 25 85% 60%;
-    --accent-foreground: 0 0% 100%;
+  --accent: 18 70% 70%; /* peach latte */
+  --accent-foreground: 24 30% 18%;
     
     /* Success - Nature Green */
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
     
     /* Muted - Soft Grays */
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+  --muted: 36 35% 92%;
+  --muted-foreground: 24 20% 35%;
     
     /* Cards */
-    --card: 0 0% 100%;
-    --card-foreground: 213 31% 91%;
+  --card: 36 45% 97%;
+  --card-foreground: 24 30% 18%;
     
     /* Border & Input */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 210 100% 65%;
+  --border: 30 20% 80%;
+  --input: 30 25% 88%;
+  --ring: 25 45% 45%;
     
     /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
     /* Popover */
-    --popover: 0 0% 100%;
-    --popover-foreground: 213 31% 91%;
+  --popover: 36 45% 97%;
+  --popover-foreground: 24 30% 18%;
     
     /* Travel Gradients */
-    --gradient-sky: linear-gradient(135deg, hsl(210 100% 65%), hsl(210 100% 75%));
-    --gradient-sunset: linear-gradient(135deg, hsl(25 85% 60%), hsl(45 90% 70%));
-    --gradient-ocean: linear-gradient(180deg, hsl(210 100% 65%), hsl(195 100% 50%));
-    --gradient-hero: linear-gradient(135deg, hsl(210 100% 65%) 0%, hsl(195 100% 50%) 50%, hsl(25 85% 60%) 100%);
+  --gradient-sky: linear-gradient(135deg, hsl(36 45% 96%), hsl(36 45% 92%));
+  --gradient-sunset: linear-gradient(135deg, hsl(20 50% 88%), hsl(35 50% 92%));
+  --gradient-ocean: linear-gradient(180deg, hsl(36 45% 96%), hsl(35 45% 92%));
+  --gradient-hero: linear-gradient(135deg, hsl(36 45% 96%) 0%, hsl(36 45% 94%) 50%, hsl(20 50% 90%) 100%);
     
     /* Shadows */
-    --shadow-soft: 0 4px 20px -2px hsl(210 100% 65% / 0.1);
-    --shadow-medium: 0 8px 30px -4px hsl(210 100% 65% / 0.15);
-    --shadow-strong: 0 20px 60px -10px hsl(210 100% 65% / 0.25);
-    --shadow-glow: 0 0 40px hsl(210 100% 75% / 0.3);
+  --shadow-soft: 0 4px 18px -3px hsl(24 30% 20% / 0.08);
+  --shadow-medium: 0 8px 28px -6px hsl(24 30% 20% / 0.12);
+  --shadow-strong: 0 18px 54px -10px hsl(24 30% 20% / 0.18);
+  --shadow-glow: 0 0 40px hsl(36 45% 92% / 0.4);
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -146,9 +146,23 @@
 }
 
 @layer components {
+  /* Parchment map background: layered subtle paper + contour lines */
+  .map-parchment {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(100% 100% at 50% 0%, hsl(36 45% 96%) 0%, hsl(36 45% 94%) 100%),
+      url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop stop-color='%23c7b8a3' stop-opacity='0.15'/%3E%3Cstop offset='1' stop-color='%23c7b8a3' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 80C60 60 120 120 180 100s120-60 140-20v240H0Z' fill='url(%23g)'/%3E%3Cpath d='M0 200c50-20 110 20 170 0s120-60 150-10' fill='none' stroke='%23bfa98e' stroke-opacity='.25' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: cover, 640px 640px;
+    background-repeat: no-repeat, repeat;
+  }
+
+  h1, h2, h3 {
+    color: hsl(var(--foreground));
+    font-family: 'Playfair Display', serif;
+  }
   /* Travel-specific utility classes */
   .hero-text {
-    @apply font-playfair text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
+    @apply font-playfair text-4xl md:text-6xl lg:text-7xl font-bold text-foreground;
   }
   
   .gradient-hero {
@@ -184,7 +198,11 @@
   }
   
   .feature-card {
-    @apply bg-card rounded-2xl p-6 shadow-soft hover-lift hover-glow transition-all duration-300;
+    @apply bg-blue-50 border border-blue-100 rounded-2xl p-6 shadow-soft hover-lift transition-all duration-300;
+  }
+
+  .box-lightblue {
+    @apply bg-blue-50 border border-blue-100;
   }
   
   .nav-link {

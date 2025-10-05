@@ -29,7 +29,7 @@ const RedirectIfAuthed = ({ children }: { children: JSX.Element }) => {
 
 function App(): JSX.Element {
   return (
-    <div className="bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] min-h-screen font-sans">
+  <div className="map-parchment text-foreground min-h-screen font-sans">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />

@@ -124,7 +124,7 @@ const Itinerary = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] text-white font-sans">
+  <div className="min-h-screen bg-background text-foreground font-sans">
       <Navigation />
       <div className="container mx-auto px-4 pt-24 pb-10">
         <h1 className="text-4xl font-bold mb-3 text-center">Custom Itinerary</h1>
@@ -132,56 +132,56 @@ const Itinerary = () => {
 
         <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6">
           {/* Trip summary card */}
-          <div className="md:col-span-1 bg-[#232526]/80 rounded-2xl p-5 border border-white/10">
+          <div className="md:col-span-1 bg-white/90 rounded-2xl p-5 border border-gray-200 shadow-soft">
             <h2 className="font-semibold mb-3">Trip Summary</h2>
-            <div className="space-y-2 text-sm text-gray-300">
-              <div><span className="text-gray-400">Destination:</span> <span className="text-white">{trip.destination || "Not set"}</span></div>
-              <div><span className="text-gray-400">Dates:</span> <span className="text-white">{trip.startDate || "Not set"} - {trip.endDate || "Not set"}</span></div>
-              <div><span className="text-gray-400">Budget:</span> <span className="text-[#f8b400] font-semibold">{formatINR(trip.budgetINR)}</span></div>
-              <div><span className="text-gray-400">Currency:</span> <span className="text-white">{trip.currency || "INR"}</span></div>
+            <div className="space-y-2 text-sm text-gray-700">
+              <div><span className="text-gray-500">Destination:</span> <span className="text-gray-900">{trip.destination || "Not set"}</span></div>
+              <div><span className="text-gray-500">Dates:</span> <span className="text-gray-900">{trip.startDate || "Not set"} - {trip.endDate || "Not set"}</span></div>
+              <div><span className="text-gray-500">Budget:</span> <span className="text-blue-700 font-semibold">{formatINR(trip.budgetINR)}</span></div>
+              <div><span className="text-gray-500">Currency:</span> <span className="text-gray-900">{trip.currency || "INR"}</span></div>
               {trip.notes && (
-                <div className="pt-2"><span className="text-gray-400">Notes:</span> <span className="text-white">{trip.notes}</span></div>
+                <div className="pt-2"><span className="text-gray-500">Notes:</span> <span className="text-gray-900">{trip.notes}</span></div>
               )}
             </div>
 
             <div className="mt-5">
-              <div className="text-xs text-gray-400">Quick prompts</div>
+              <div className="text-xs text-gray-500">Quick prompts</div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {starterPrompts.map(p => (
-                  <button key={p} className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs" onClick={() => send(p)}>{p}</button>
+                  <button key={p} className="px-3 py-1 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs border border-blue-100" onClick={() => send(p)}>{p}</button>
                 ))}
               </div>
             </div>
           </div>
 
           {/* Chat panel */}
-          <div className="md:col-span-2 bg-[#232526]/80 rounded-2xl border border-white/10 flex flex-col" ref={exportRef}>
+          <div className="md:col-span-2 bg-white/90 rounded-2xl border border-gray-200 flex flex-col shadow-soft" ref={exportRef}>
             <div ref={containerRef} className="flex-1 overflow-y-auto p-5 space-y-4">
               {messages.map((m, idx) => (
                 <div key={idx} className={`max-w-[85%] ${m.role === 'user' ? 'ml-auto text-right' : ''}`}>
-                  <div className={`inline-block px-4 py-3 rounded-2xl whitespace-pre-wrap ${m.role === 'user' ? 'bg-gradient-to-r from-[#1fd1f9] to-[#e94560]' : 'bg-black/30 border border-white/10'}`}>
+                  <div className={`inline-block px-4 py-3 rounded-2xl whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-100 text-blue-900' : 'bg-gray-50 border border-gray-200 text-gray-900'}`}>
                     {m.content}
                   </div>
                 </div>
               ))}
-              {loading && <div className="text-sm text-gray-400">Thinking…</div>}
+              {loading && <div className="text-sm text-gray-500">Thinking…</div>}
             </div>
-            <div className="p-4 border-t border-white/10 flex gap-2">
+            <div className="p-4 border-t border-gray-200 flex gap-2">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
                 placeholder="Ask for a 5-day plan, budget, food, or visa details…"
-                className="flex-1 bg-[#0b1220]/70 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#1fd1f9]"
+                className="flex-1 bg-white border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-blue-400"
               />
               <button
                 onClick={() => send()}
                 disabled={loading}
-                className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#e94560] to-[#f8b400] disabled:opacity-50"
+                className="px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50"
               >Send</button>
               <button
                 onClick={downloadPDF}
-                className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20"
+                className="px-5 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800"
                 title="Download latest itinerary as PDF"
               >Download PDF</button>
             </div>
