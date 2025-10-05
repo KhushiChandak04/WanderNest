@@ -4,9 +4,8 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
-// DB and auth temporarily disabled to avoid Mongo dependency
-// import { connectDB, dbHealth } from "./config/db.js";
-// import authRoutes from "./routes/authRoutes.js";
+import { connectDB, dbHealth } from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
 import aiRoutes from "./routes/ai.js";
 import "./polyfills/fetch.js";
 
@@ -21,9 +20,6 @@ console.log("XAI key present:", Boolean(process.env.XAI_API_KEY || process.env.G
 
 // Core middleware
 app.use(cors({
-  origin: ["http://localhost:8080", "http://127.0.0.1:8080"],
-  credentials: true,
-}{
   origin: [
     'http://localhost:8080',
     'http://127.0.0.1:8080',
@@ -36,7 +32,7 @@ app.use(express.json());
 
 // Health check route (no DB info for now)
 app.get("/healthz", (_req, res) => {
-  res.json({ status: "ok", uptime: process.uptime() });
+  res.json({ status: "ok", uptime: process.uptime(), db: dbHealth() });
 });
 
 // Root route
@@ -44,8 +40,8 @@ app.get("/", (_req, res) => {
   res.send("WanderNest API is running…");
 });
 
-// Auth routes disabled until DB is re-enabled
-// app.use("/api/auth", authRoutes);
+// Auth routes (Supabase-backed)
+app.use("/api/auth", authRoutes);
 // AI proxy routes
 app.use("/api/ai", aiRoutes);
 
@@ -55,6 +51,9 @@ if (Number(process.env.PORT) === 5000) {
   console.warn("⚠️ PORT=5000 is busy in your environment. Starting on 5050 instead.");
   desiredPort = 5050;
 }
+
+// Initialize Supabase (non-blocking)
+try { connectDB(); } catch {}
 
 const serverInstance = app.listen(desiredPort, () => {
   console.log(`🚀 Server running on http://localhost:${desiredPort}`);

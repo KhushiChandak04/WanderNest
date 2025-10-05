@@ -313,58 +313,7 @@ const Login = () => {
               </motion.button>
             </div>
 
-            {/* Divider */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.1 }}
-              className="relative my-8"
-            >
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/20"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-gradient-to-br from-[#232526] to-[#414345] px-4 text-gray-400">
-                  Or continue with
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Social Login */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 }}
-              className="space-y-3"
-            >
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
-                className="w-full bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
-              >
-                <div className="w-5 h-5 bg-white rounded-sm flex items-center justify-center">
-                  <span className="text-xs text-black font-bold">G</span>
-                </div>
-                Continue with Google
-              </button>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <button 
-                  type="button"
-                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
-                >
-                  <span className="text-blue-400 font-bold">f</span>
-                  Facebook
-                </button>
-                <button 
-                  type="button"
-                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
-                >
-                  <span className="text-blue-300 font-bold">𝕏</span>
-                  Twitter
-                </button>
-              </div>
-            </motion.div>
+            {/* Social login removed as requested */}
 
             {/* Sign Up Link */}
             <motion.div

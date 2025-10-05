@@ -18,8 +18,13 @@ import Footer from "./pages/Footer";
 const queryClient = new QueryClient();
 
 const RequireAuth = ({ children }: { children: JSX.Element }) => {
-  const token = localStorage.getItem("token");
+  const token = typeof window !== 'undefined' ? localStorage.getItem('wandernest_token') : null;
   return token ? children : <Navigate to="/login" replace />;
+};
+
+const RedirectIfAuthed = ({ children }: { children: JSX.Element }) => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('wandernest_token') : null;
+  return token ? <Navigate to="/" replace /> : children;
 };
 
 function App(): JSX.Element {
@@ -32,15 +37,23 @@ function App(): JSX.Element {
           <BrowserRouter>
             <Navbar />
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/plan" element={<PlanTrip />} />
-              <Route path="/visa-guide" element={<VisaGuide />} />
-            <Route path="/itinerary" element={<Itinerary />} />
-              <Route path="/food-finder" element={<FoodFinder />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+              {/* Public routes */}
+              <Route path="/login" element={<RedirectIfAuthed><Login /></RedirectIfAuthed>} />
+              <Route path="/register" element={<RedirectIfAuthed><Register /></RedirectIfAuthed>} />
+
+              {/* Protected routes */}
+              <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+              <Route path="/plan" element={<RequireAuth><PlanTrip /></RequireAuth>} />
+              <Route path="/visa-guide" element={<RequireAuth><VisaGuide /></RequireAuth>} />
+              <Route path="/itinerary" element={<RequireAuth><Itinerary /></RequireAuth>} />
+              <Route path="/food-finder" element={<RequireAuth><FoodFinder /></RequireAuth>} />
+
+              {/* Catch-all -> if authed, show 404; else redirect to login */}
+              <Route path="*" element={
+                typeof window !== 'undefined' && localStorage.getItem('wandernest_token')
+                  ? <NotFound />
+                  : <Navigate to="/login" replace />
+              } />
             </Routes>
             <Footer />
           </BrowserRouter>
