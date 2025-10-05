@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin, Users, DollarSign, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import bgImage from "../assets/bg.jpg";
 
@@ -11,6 +12,7 @@ const steps = [
 
 const PlanTrip = () => {
   const [step, setStep] = useState(0);
+  const navigate = useNavigate();
   const [budget, setBudget] = useState(100000); // INR default
   const [formData, setFormData] = useState({
     startDate: '',
@@ -247,7 +249,7 @@ const PlanTrip = () => {
                           step={1000}
                           value={budget}
                           onChange={e => setBudget(Number(e.target.value))}
-                          className="w-full h-3 bg-[#232526]/50 rounded-lg appearance-none cursor-pointer slider"
+                          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                         />
                         <div className="flex justify-between text-base text-[#b6c2d1]">
                           <span>{formatINR(10000)}</span>
@@ -345,7 +347,17 @@ const PlanTrip = () => {
                 </div>
                 
                 <button 
-                  onClick={step === steps.length - 1 ? () => setStep(0) : nextStep}
+                  onClick={step === steps.length - 1 ? () => {
+                    const trip = {
+                      startDate: formData.startDate,
+                      endDate: formData.endDate,
+                      destination: formData.destination,
+                      notes: formData.notes,
+                      currency: 'INR',
+                      budgetINR: budget,
+                    };
+                    navigate('/itinerary', { state: { trip } });
+                  } : nextStep}
                   className="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold bg-gradient-to-r from-[#1fd1f9] to-[#f8b400] hover:from-[#1fd1f9]/80 hover:to-[#f8b400]/80 text-white transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#1fd1f9]/25"
                 >
                   {step === steps.length - 1 ? "Start Planning!" : "Next"}
@@ -356,13 +368,27 @@ const PlanTrip = () => {
           </div>
         </div>
       </div>
-      <style jsx>{`
+  <style>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in {
           animation: fade-in 0.6s ease-out;
+        }
+        /* Slider track styles for better visibility */
+        .slider::-webkit-slider-runnable-track {
+          height: 8px;
+          background: rgba(255,255,255,0.25);
+          border-radius: 9999px;
+        }
+        .slider:focus::-webkit-slider-runnable-track {
+          background: rgba(255,255,255,0.35);
+        }
+        .slider::-moz-range-track {
+          height: 8px;
+          background: rgba(255,255,255,0.25);
+          border-radius: 9999px;
         }
         .slider::-webkit-slider-thumb {
           appearance: none;
@@ -372,6 +398,7 @@ const PlanTrip = () => {
           border-radius: 50%;
           cursor: pointer;
           box-shadow: 0 4px 12px rgba(31, 209, 249, 0.4);
+          margin-top: -8px;
         }
         .slider::-moz-range-thumb {
           height: 24px;
@@ -382,6 +409,7 @@ const PlanTrip = () => {
           border: none;
           box-shadow: 0 4px 12px rgba(31, 209, 249, 0.4);
         }
+        .slider:focus { outline: none; }
       `}</style>
     </div>
   );

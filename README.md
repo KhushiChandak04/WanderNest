@@ -64,10 +64,32 @@ d:\GitHub\WanderNest
    ```sh
    npm install axios
    ```
-5. Start the development server:
-   ```sh
+5. Backend (server) – run in a new terminal:
+   - In PowerShell (Windows), set your environment variables (per-session):
+     ```powershell
+     # Required: x.ai (Grok) API key – keep secret and never commit
+     $env:XAI_API_KEY = "<your-xai-api-key>"
+
+     # Optional: allow demo responses if upstream is unavailable
+     $env:AI_DEMO_FALLBACK = "true"
+
+     cd server
+     npm install
+     npm run start
+     ```
+   - Health check: http://localhost:5000/api/ai/health → `{ ok: true, hasKey: true }`
+
+6. Frontend (root):
+   ```powershell
+   npm install
    npm run dev
+   # open http://localhost:8080
    ```
+
+Notes
+- Dev proxy: Vite proxies `/api` → `http://localhost:5000` (see `vite.config.ts`).
+- Client only calls your backend; the API key is never exposed to the browser.
+- To go live (no demo fallback): remove the environment variable `AI_DEMO_FALLBACK` and restart the server.
 
 ## Troubleshooting
 
@@ -82,9 +104,9 @@ npm install axios
 ## Security Note
 
 **Never commit your `.env` file to version control.**  
-Your `.env` contains sensitive credentials (like your MongoDB password).  
+Your `.env` contains sensitive credentials (e.g., API keys, database URIs).  
 If it was committed, follow these steps:
 1. Add `.env` to `.gitignore`.
 2. Remove it from git history (`git rm --cached server/.env` and commit).
-3. Change your database password immediately.
+3. Rotate any exposed API keys/passwords immediately.
 4. (Optional) Use `git-filter-repo` to remove `.env` from all past commits.
