@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { aiChatWithRetry, type ChatMessage, type TripContext } from "@/services/ai";
-import Navigation from "@/components/Navigation";
 
 function formatINR(value?: number) {
   if (!value && value !== 0) return "N/A";
@@ -109,15 +108,28 @@ const Itinerary = () => {
     try {
       const resp = await aiChatWithRetry(newMsgs.filter(m => m.role !== "assistant" || m.content.length < 4000), trip);
       const ai = resp?.choices?.[0]?.message?.content || resp?.choices?.[0]?.delta?.content || "Sorry, I couldn't generate a response.";
-      setMessages(prev => [...prev, { role: "assistant", content: ai }] as ChatMessage[]);
+      const isFallback = resp?.meta?.demo === true;
+      const additions: ChatMessage[] = [{ role: "assistant", content: ai }];
+      if (isFallback) {
+        additions.push({
+          role: "assistant",
+          content: "Note: Showing a demo-style reply because the live AI couldn’t be reached. Check the server logs and your XAI_API_KEY."
+        } as ChatMessage);
+      }
+      setMessages(prev => [...prev, ...additions] as ChatMessage[]);
     } catch (e: any) {
-      const errText = typeof e?.response?.data === 'object' ? JSON.stringify(e.response.data) : (e?.response?.data || e?.message || 'Unknown error');
-      const hint = e?.code === 'ERR_NETWORK' ? "Network issue detected. If you're on localhost, ensure the backend at port 5000 is running. We'll keep your messages and you can retry." : undefined;
-      const msg = [
-        `There was an issue contacting the itinerary assistant. Details: ${errText}`,
-        hint
-      ].filter(Boolean).join("\n\n");
-      setMessages(prev => [...prev, { role: "assistant", content: msg }] as ChatMessage[]);
+      const status = e?.response?.status;
+      if (status === 401) {
+        setMessages(prev => [...prev, { role: "assistant", content: "You’re not logged in or your session expired. Please log in again to use the itinerary assistant." }] as ChatMessage[]);
+      } else if (status === 502) {
+        const info = typeof e?.response?.data === 'object' ? JSON.stringify(e.response.data) : (e?.response?.data || '');
+        setMessages(prev => [...prev, { role: "assistant", content: `The AI upstream returned an error. Please try again in a moment. ${info ? `\n\nDetails: ${info}` : ''}` }] as ChatMessage[]);
+      } else if (e?.code === 'ERR_NETWORK') {
+        setMessages(prev => [...prev, { role: "assistant", content: "Network issue detected. Ensure the backend is running and reachable from the app." }] as ChatMessage[]);
+      } else {
+        const errText = typeof e?.response?.data === 'object' ? JSON.stringify(e.response.data) : (e?.response?.data || e?.message || 'Unknown error');
+        setMessages(prev => [...prev, { role: "assistant", content: `There was an issue contacting the itinerary assistant. Details: ${errText}` }] as ChatMessage[]);
+      }
     } finally {
       setLoading(false);
     }
@@ -125,7 +137,6 @@ const Itinerary = () => {
 
   return (
   <div className="min-h-screen bg-background text-foreground font-sans">
-      <Navigation />
       <div className="container mx-auto px-4 pt-24 pb-10">
         <h1 className="text-4xl font-bold mb-3 text-center">Custom Itinerary</h1>
   <p className="text-center text-foreground mb-6">{tripSummary || "Provide trip details to personalize your plan."}</p>

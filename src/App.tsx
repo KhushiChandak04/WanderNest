@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import React from "react";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -27,6 +27,16 @@ const RedirectIfAuthed = ({ children }: { children: JSX.Element }) => {
   return token ? <Navigate to="/" replace /> : children;
 };
 
+// Scroll to top on route changes
+const ScrollToTop: React.FC = () => {
+  const location = useLocation();
+  React.useEffect(() => {
+    // Smoothly scroll to top whenever pathname changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
+  return null;
+};
+
 function App(): JSX.Element {
   return (
   <div className="map-parchment text-foreground min-h-screen font-sans">
@@ -35,6 +45,7 @@ function App(): JSX.Element {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <Navbar />
             <Routes>
               {/* Public routes */}
@@ -46,7 +57,7 @@ function App(): JSX.Element {
               <Route path="/plan" element={<RequireAuth><PlanTrip /></RequireAuth>} />
               <Route path="/visa-guide" element={<RequireAuth><VisaGuide /></RequireAuth>} />
               <Route path="/itinerary" element={<RequireAuth><Itinerary /></RequireAuth>} />
-              <Route path="/food-finder" element={<RequireAuth><FoodFinder /></RequireAuth>} />
+              {/* Food Finder removed as requested */}
 
               {/* Catch-all -> if authed, show 404; else redirect to login */}
               <Route path="*" element={

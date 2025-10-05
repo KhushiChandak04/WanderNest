@@ -657,42 +657,133 @@ const Home = () => {
                   <AccordionTrigger className="text-left">Schengen (France, Italy, etc.)</AccordionTrigger>
                   <AccordionContent>
                     Type C tourist visa. Include itinerary, proof of stay, insurance of €30,000+, and funds. Biometrics required. Apply where you spend most nights or first entry if equal. Processing ~15–30 days.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          VFS Global (India Schengen centers):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.vfsglobal.com/en/individuals/index.html" target="_blank" rel="noopener noreferrer">vfsglobal.com</a>
+                        </li>
+                        <li>
+                          EU Visa policy (official):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://visa.europa.eu/" target="_blank" rel="noopener noreferrer">visa.europa.eu</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="japan">
                   <AccordionTrigger className="text-left">Japan</AccordionTrigger>
                   <AccordionContent>
                     Submit itinerary, stay proof, financials, and employment docs. No on‑arrival visa; apply via VFS/consulate. Processing typically 5–10 working days.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          Embassy of Japan in India:
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.in.emb-japan.go.jp/itpr_en/visa.html" target="_blank" rel="noopener noreferrer">in.emb-japan.go.jp</a>
+                        </li>
+                        <li>
+                          VFS Japan (India):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://visa.vfsglobal.com/ind/en/jpn/" target="_blank" rel="noopener noreferrer">visa.vfsglobal.com/ind/en/jpn</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="uk">
                   <AccordionTrigger className="text-left">United Kingdom</AccordionTrigger>
                   <AccordionContent>
                     Online form, biometrics, and supporting docs. Standard visitor visas take ~2–6+ weeks. Priority/super priority services are available in select centers.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          GOV.UK visas and immigration:
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.gov.uk/standard-visitor" target="_blank" rel="noopener noreferrer">gov.uk/standard-visitor</a>
+                        </li>
+                        <li>
+                          VFS UK (India):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://visa.vfsglobal.com/ind/en/gbr/" target="_blank" rel="noopener noreferrer">visa.vfsglobal.com/ind/en/gbr</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="usa">
                   <AccordionTrigger className="text-left">United States</AccordionTrigger>
                   <AccordionContent>
                     B1/B2: DS‑160, fee, VAC + interview. Long wait times common—book months ahead. Strengthen ties to India and ensure document consistency.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          U.S. Dept. of State (Visitor Visas):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://travel.state.gov/content/travel/en/us-visas/tourism-visit/visitor.html" target="_blank" rel="noopener noreferrer">travel.state.gov</a>
+                        </li>
+                        <li>
+                          U.S. Visa appointment (India):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.ustraveldocs.com/in/" target="_blank" rel="noopener noreferrer">ustraveldocs.com/in</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="bali">
                   <AccordionTrigger className="text-left">Bali (Indonesia)</AccordionTrigger>
                   <AccordionContent>
                     Visa on Arrival (VoA) available for tourism. Carry return/onward tickets, hotel proof, and sufficient funds. Rules change often—verify latest policies.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          Indonesian Immigration (eVisa/VoA info):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.imigrasi.go.id/en/" target="_blank" rel="noopener noreferrer">imigrasi.go.id</a>
+                        </li>
+                        <li>
+                          Official e-Visa portal (Indonesia):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://molina.imigrasi.go.id/" target="_blank" rel="noopener noreferrer">molina.imigrasi.go.id</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="uae">
                   <AccordionTrigger className="text-left">UAE (Dubai, Abu Dhabi)</AccordionTrigger>
                   <AccordionContent>
                     Tourist e‑visas via authorized partners/airlines. Ensure hotel booking, return ticket, and funds. Processing is usually quick (2–5 working days).
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          ICP UAE (Federal Authority for Identity, Citizenship, Customs & Ports Security):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://icp.gov.ae/en/" target="_blank" rel="noopener noreferrer">icp.gov.ae</a>
+                        </li>
+                        <li>
+                          GDRFA Dubai (for Dubai-sponsored visas):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.gdrfad.gov.ae/en" target="_blank" rel="noopener noreferrer">gdrfad.gov.ae</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="thailand">
                   <AccordionTrigger className="text-left">Thailand</AccordionTrigger>
                   <AccordionContent>
                     Indians can apply for e‑visa/e‑VOA depending on policy. Keep return tickets, stay proof, and funds. Processing times vary; check official channels.
+                    <div className="mt-2 text-sm">
+                      Official links:
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li>
+                          Thailand e-Visa (official):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://thaievisa.go.th/" target="_blank" rel="noopener noreferrer">thaievisa.go.th</a>
+                        </li>
+                        <li>
+                          Airports of Thailand (e-VOA partner info):
+                          <a className="text-blue-700 hover:underline ml-1" href="https://www.immigration.go.th/en/" target="_blank" rel="noopener noreferrer">immigration.go.th</a>
+                        </li>
+                      </ul>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

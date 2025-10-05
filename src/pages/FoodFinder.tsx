@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navigation from "@/components/Navigation";
+// Navigation is provided globally in App.tsx
 
 const foods = [
   { name: "Sushi", type: "Pure Veg", city: "Tokyo", image: "/assets/food1.jpg", link: "#" },
@@ -17,7 +17,6 @@ const FoodFinder = () => {
 
   return (
   <div className="min-h-screen bg-background text-foreground font-sans transition-all duration-500">
-      <Navigation />
       <div className="container mx-auto px-4 pt-24">
         <h1 className="text-4xl font-bold mb-6 drop-shadow-lg text-center">Food Finder</h1>
         <div className="max-w-md mx-auto mb-8">

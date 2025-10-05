@@ -14,7 +14,6 @@ const Navigation = () => {
     { href: '/', label: 'Home' },
     { href: '/plan', label: 'Plan Your Trip' },
     { href: '/visa-guide', label: 'Visa Guide' },
-    { href: '/food-finder', label: 'Food Finder' },
   ];
 
   useEffect(() => {
