@@ -10,7 +10,10 @@ dotenv.config();
 const app = express();
 
 // Core middleware
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:8080", "http://127.0.0.1:8080"],
+  credentials: true,
+}));
 app.use(express.json());
 
 // Health check routes (available even if DB is down)

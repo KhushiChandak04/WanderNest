@@ -1,26 +1,30 @@
-// config/db.js
-import mongoose from "mongoose";
+// config/db.js — Supabase client
+import { createClient } from '@supabase/supabase-js';
 
-let isConnected = false;
+// Live binding for the Supabase client; initialized by connectDB()
+export let supabase = null;
 
-// Connect to MongoDB
+const clean = (v) => (typeof v === 'string' ? v.trim().replace(/^"|"$/g, '') : v);
+
+// Keep exported names so server.js doesn't need changes.
 export const connectDB = async () => {
+  const url = clean(process.env.SUPABASE_URL);
+  // Use service role key only on the server
+  const key = clean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+  if (!url || !key) {
+    console.warn('⚠️  SUPABASE_URL or SUPABASE_* key not provided — Supabase disabled.');
+    return;
+  }
+
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    isConnected = true;
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error(`❌ MongoDB connection error: ${error.message}`);
-    process.exit(1);
+    supabase = createClient(url, key);
+    console.log('✅ Supabase client initialized');
+  } catch (e) {
+    console.error('❌ Failed to initialize Supabase client:', e?.message || e);
   }
 };
 
-// DB Health Check
 export const dbHealth = () => {
-  const state = mongoose.connection.readyState; // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
-  const states = ["Disconnected", "Connected", "Connecting", "Disconnecting"];
-  return { status: states[state] || "Unknown" }; // ✅ inside a function now
+  return { status: supabase ? 'Ready' : 'NotConfigured' };
 };

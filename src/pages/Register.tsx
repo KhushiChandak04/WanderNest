@@ -30,21 +30,36 @@ const Register = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    // Simulate API call
-    setTimeout(() => {
-      if (
-        formData.name &&
-        formData.email &&
-        formData.password &&
-        formData.password === formData.confirmPassword
-      ) {
-        setShowSuccess(true);
-        setIsLoading(false);
-      } else {
-        setError('Please fill all fields and make sure passwords match.');
-        setIsLoading(false);
+
+    if (!formData.name || !formData.email || !formData.password || formData.password !== formData.confirmPassword) {
+      setError('Please fill all fields and make sure passwords match.');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const res = await API.post('/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      // Optional: store session tokens if provided
+      const token = res?.data?.session?.access_token;
+      if (token) {
+        try { localStorage.setItem('wandernest_token', token); } catch {}
       }
-    }, 1500);
+
+      setShowSuccess(true);
+      setIsLoading(false);
+      setTimeout(() => {
+        try { window.location.href = '/'; } catch {}
+      }, 1000);
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || 'Registration failed. Please try again.';
+      setError(msg);
+      setIsLoading(false);
+    }
   };
 
   const handleDemoRegister = () => {

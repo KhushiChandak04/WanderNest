@@ -3,23 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, Plane, Check, X, ArrowLeft, Globe, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import bgImage from "../assets/bg.jpg";
-
-// Mock API for demo purposes
-const API = {
-  post: (url, data) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (data.email === 'demo@wandernest.com' && data.password === 'demo1234') {
-          resolve({ data: { success: true, user: { name: 'Demo User', email: data.email } } });
-        } else if (data.email && data.password) {
-          resolve({ data: { success: true, user: { name: 'Travel Explorer', email: data.email } } });
-        } else {
-          reject(new Error('Invalid credentials'));
-        }
-      }, 1500);
-    });
-  }
-};
+import API from '../services/api';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,22 +16,29 @@ const Login = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsLoading(true);
     setError('');
 
     try {
-      const response = await API.post('/login', { email, password });
+      const response = await API.post('/auth/login', { email, password });
       console.log('Login successful:', response.data);
+
+      // Optionally store session token
+      const token = response?.data?.session?.access_token;
+      if (token) {
+        try { localStorage.setItem('wandernest_token', token); } catch {}
+      }
       setShowSuccess(true);
       setTimeout(() => {
         setIsLoading(false);
         setIsLoggedIn(true);
-        // In a real app, you would navigate here: navigate('/dashboard');
-      }, 1500);
+        try { window.location.href = '/'; } catch {}
+      }, 800);
     } catch (err) {
-      setError('Invalid email or password. Please try again.');
+      const msg = (err?.response?.data?.error) || 'Invalid email or password. Please try again.';
+      setError(msg);
       setIsLoading(false);
     }
   };

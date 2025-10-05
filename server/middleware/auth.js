@@ -1,5 +1,4 @@
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import { supabase } from "../config/db.js";
 
 export const protect = async (req, res, next) => {
   let token;
@@ -14,10 +13,19 @@ export const protect = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // attach user (sans password)
-    req.user = await User.findById(decoded.id).select("-password");
-    if (!req.user) return res.status(401).json({ message: "User no longer exists" });
+    if (!supabase) {
+      return res.status(500).json({ message: "Supabase not configured" });
+    }
+
+    // Validate the JWT via Supabase
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error || !data?.user) {
+      return res.status(401).json({ message: "Not authorized, token invalid" });
+    }
+
+    // Attach a simplified user object similar to the previous shape
+    const user = data.user;
+    req.user = { id: user.id, name: user.user_metadata?.name, email: user.email };
     next();
   } catch (err) {
     return res.status(401).json({ message: "Not authorized, token invalid" });
