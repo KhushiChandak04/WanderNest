@@ -24,55 +24,51 @@ router.get("/health", (req, res) => {
 // POST /api/ai/chat
 router.post("/chat", protect, async (req, res) => {
   try {
-    const apiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
-    const demo = process.env.AI_DEMO_FALLBACK === 'true';
+    const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
     const { messages = [], trip } = req.body || {};
-
-    // If demo mode is enabled, allow responses even without an API key
-    if (!apiKey && demo) {
-      const fallback = buildFallbackReply(messages, trip);
-      return res.json({ choices: [{ message: { content: fallback } }] });
-    }
-    if (!apiKey) {
-      const fallback = buildFallbackReply(messages, trip);
-      return res.json({ choices: [{ message: { content: fallback } }], meta: { demo: true, reason: "missing_api_key" } });
-    }
 
     const systemPrompt = [
       { role: 'system', content: "You are WanderNest's expert Indian travel planner. Create concise, actionable travel answers and itineraries. Always use INR for costs and show practical visa notes (not legal advice). Be specific with neighborhoods/areas." },
       { role: 'system', content: `Trip context (Indian national): ${JSON.stringify(trip || {}, null, 2)}\nIf destination missing, ask for it. Prefer family-friendly and dietary constraints from notes.` }
     ];
 
-    const payload = {
-      model: "grok-4-latest",
-      stream: false,
-      temperature: 0.4,
-      messages: [...systemPrompt, ...messages]
-    };
-
-    const resp = await fetch("https://api.x.ai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!resp.ok) {
-      let details;
-      try {
-        details = await resp.json();
-      } catch {
-        details = await resp.text();
-      }
-      console.error("/api/ai/chat upstream error", resp.status, details);
-      const fallback = buildFallbackReply(messages, trip);
-      return res.json({ choices: [{ message: { content: fallback } }], meta: { demo: true, reason: "upstream_error", details } });
+    if (provider === 'ollama') {
+      const resp = await callOllama([...systemPrompt, ...messages]);
+      return res.json(resp);
     }
-
-    const data = await resp.json();
-    res.json(data);
+    if (provider === 'groq') {
+      try {
+        const resp = await callGroq([...systemPrompt, ...messages]);
+        return res.json(resp);
+      } catch (e) {
+        const status = e?.status || e?.responseStatus;
+        if (status === 401 || status === 403) {
+          try {
+            const fallback = await callOllama([...systemPrompt, ...messages]);
+            return res.json({ ...fallback, meta: { provider: 'ollama', fallbackFrom: 'groq' } });
+          } catch (e2) {
+            return res.status(403).json({ error: 'groq forbidden and local Ollama unavailable', details: toErr(e), fallbackError: toErr(e2) });
+          }
+        }
+        throw e;
+      }
+    }
+    // default to x.ai if explicitly configured
+    try {
+      const resp = await callXAI([...systemPrompt, ...messages]);
+      return res.json(resp);
+    } catch (e) {
+      const status = e?.status || e?.responseStatus;
+      if (status === 401 || status === 403) {
+        try {
+          const fallback = await callOllama([...systemPrompt, ...messages]);
+          return res.json({ ...fallback, meta: { provider: 'ollama', fallbackFrom: 'xai' } });
+        } catch (e2) {
+          return res.status(403).json({ error: 'x.ai forbidden and local Ollama unavailable', details: toErr(e), fallbackError: toErr(e2) });
+        }
+      }
+      throw e;
+    }
   } catch (err) {
     console.error("/api/ai/chat error", err);
     return res.status(500).json({ error: "Unhandled server error", details: String(err?.message || err) });
