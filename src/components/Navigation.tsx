@@ -37,8 +37,8 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 hover:scale-105 transition-transform duration-300">
-            <Plane className="h-8 w-8 text-primary" />
-            <span className="font-playfair text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <Plane className="h-8 w-8 text-blue-700" />
+            <span className="font-playfair text-2xl font-bold text-foreground">
               WanderNest
             </span>
           </Link>

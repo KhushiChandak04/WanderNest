@@ -128,24 +128,24 @@ const Itinerary = () => {
       <Navigation />
       <div className="container mx-auto px-4 pt-24 pb-10">
         <h1 className="text-4xl font-bold mb-3 text-center">Custom Itinerary</h1>
-        <p className="text-center text-gray-300 mb-6">{tripSummary || "Provide trip details to personalize your plan."}</p>
+  <p className="text-center text-foreground mb-6">{tripSummary || "Provide trip details to personalize your plan."}</p>
 
         <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6">
           {/* Trip summary card */}
-          <div className="md:col-span-1 bg-white/90 rounded-2xl p-5 border border-gray-200 shadow-soft">
+          <div className="md:col-span-1 bg-blue-50 rounded-2xl p-5 border border-blue-100 shadow-soft">
             <h2 className="font-semibold mb-3">Trip Summary</h2>
-            <div className="space-y-2 text-sm text-gray-700">
-              <div><span className="text-gray-500">Destination:</span> <span className="text-gray-900">{trip.destination || "Not set"}</span></div>
-              <div><span className="text-gray-500">Dates:</span> <span className="text-gray-900">{trip.startDate || "Not set"} - {trip.endDate || "Not set"}</span></div>
+            <div className="space-y-2 text-sm text-foreground">
+              <div><span className="text-foreground/70">Destination:</span> <span className="text-foreground">{trip.destination || "Not set"}</span></div>
+              <div><span className="text-foreground/70">Dates:</span> <span className="text-foreground">{trip.startDate || "Not set"} - {trip.endDate || "Not set"}</span></div>
               <div><span className="text-gray-500">Budget:</span> <span className="text-blue-700 font-semibold">{formatINR(trip.budgetINR)}</span></div>
-              <div><span className="text-gray-500">Currency:</span> <span className="text-gray-900">{trip.currency || "INR"}</span></div>
+              <div><span className="text-foreground/70">Currency:</span> <span className="text-foreground">{trip.currency || "INR"}</span></div>
               {trip.notes && (
-                <div className="pt-2"><span className="text-gray-500">Notes:</span> <span className="text-gray-900">{trip.notes}</span></div>
+                <div className="pt-2"><span className="text-foreground/70">Notes:</span> <span className="text-foreground">{trip.notes}</span></div>
               )}
             </div>
 
             <div className="mt-5">
-              <div className="text-xs text-gray-500">Quick prompts</div>
+              <div className="text-xs text-foreground/70">Quick prompts</div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {starterPrompts.map(p => (
                   <button key={p} className="px-3 py-1 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs border border-blue-100" onClick={() => send(p)}>{p}</button>
@@ -155,24 +155,24 @@ const Itinerary = () => {
           </div>
 
           {/* Chat panel */}
-          <div className="md:col-span-2 bg-white/90 rounded-2xl border border-gray-200 flex flex-col shadow-soft" ref={exportRef}>
+          <div className="md:col-span-2 bg-blue-50 rounded-2xl border border-blue-100 flex flex-col shadow-soft" ref={exportRef}>
             <div ref={containerRef} className="flex-1 overflow-y-auto p-5 space-y-4">
               {messages.map((m, idx) => (
                 <div key={idx} className={`max-w-[85%] ${m.role === 'user' ? 'ml-auto text-right' : ''}`}>
-                  <div className={`inline-block px-4 py-3 rounded-2xl whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-100 text-blue-900' : 'bg-gray-50 border border-gray-200 text-gray-900'}`}>
+                  <div className={`inline-block px-4 py-3 rounded-2xl whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-100 text-blue-900' : 'bg-white border border-blue-100 text-foreground'}`}>
                     {m.content}
                   </div>
                 </div>
               ))}
-              {loading && <div className="text-sm text-gray-500">Thinking…</div>}
+              {loading && <div className="text-sm text-foreground/70">Thinking…</div>}
             </div>
-            <div className="p-4 border-t border-gray-200 flex gap-2">
+            <div className="p-4 border-t border-blue-100 flex gap-2">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
                 placeholder="Ask for a 5-day plan, budget, food, or visa details…"
-                className="flex-1 bg-white border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-blue-400"
+                className="flex-1 bg-white border border-blue-200 rounded-xl px-4 py-3 outline-none focus:border-blue-400"
               />
               <button
                 onClick={() => send()}
@@ -181,7 +181,7 @@ const Itinerary = () => {
               >Send</button>
               <button
                 onClick={downloadPDF}
-                className="px-5 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800"
+                className="px-5 py-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-100"
                 title="Download latest itinerary as PDF"
               >Download PDF</button>
             </div>

@@ -60,25 +60,13 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4 relative"
-      style={{
-        marginTop: '80px',
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundColor: "rgba(26,26,46,0.85)",
-        backgroundBlendMode: "overlay",
-        fontFamily: `'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif`
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center p-4 relative bg-background text-foreground" style={{ marginTop: '80px' }}>
       {/* Back to Home Button */}
       <motion.button 
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         onClick={() => navigate('/')}
-        className="absolute top-6 left-6 text-white/80 hover:text-white transition-all duration-300 flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 hover:bg-white/20 z-10"
+        className="absolute top-6 left-6 text-foreground hover:opacity-80 transition-all duration-300 flex items-center gap-2 box-lightblue px-4 py-2 rounded-full border z-10"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Home
@@ -91,7 +79,7 @@ const Login = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="relative z-10 w-full max-w-md"
       >
-        <div className="bg-gradient-to-br from-[#232526]/90 to-[#414345]/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+  <div className="bg-white rounded-3xl shadow-soft border border-blue-100 overflow-hidden">
           {/* Header */}
           <div className="text-center p-8 pb-6">
             <motion.div
@@ -118,7 +106,7 @@ const Login = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-3xl font-bold text-white mb-2"
+              className="text-3xl font-bold text-foreground mb-2"
             >
               Welcome Back
             </motion.h1>
@@ -127,9 +115,9 @@ const Login = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="text-gray-300 text-lg"
+              className="text-foreground/80 text-lg"
             >
-              Continue your journey with <span className="text-[#e94560] font-semibold">WanderNest</span>
+              Continue your journey with <span className="text-blue-700 font-semibold">WanderNest</span>
             </motion.p>
           </div>
 
@@ -140,7 +128,7 @@ const Login = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e]/95 to-[#0f3460]/95 flex items-center justify-center z-20 rounded-3xl"
+                className="absolute inset-0 bg-white/95 flex items-center justify-center z-20 rounded-3xl border border-blue-100"
               >
                 <div className="text-center">
                   <motion.div
@@ -155,7 +143,7 @@ const Login = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="text-2xl font-bold text-white mb-2"
+                    className="text-2xl font-bold text-foreground mb-2"
                   >
                     Welcome Back!
                   </motion.h3>
@@ -163,7 +151,7 @@ const Login = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="text-gray-300"
+                    className="text-foreground/80"
                   >
                     Redirecting to your dashboard...
                   </motion.p>
@@ -182,18 +170,18 @@ const Login = () => {
                 transition={{ delay: 0.6 }}
                 className="space-y-2"
               >
-                <label htmlFor="email" className="text-sm font-medium text-gray-300">
+                <label htmlFor="email" className="text-sm font-medium text-foreground">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-foreground/60" />
                   <input
                     id="email"
                     type="email"
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#e94560] focus:border-transparent transition-all duration-300"
+                    className="w-full pl-12 pr-4 py-4 bg-white border border-blue-100 rounded-xl text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-300"
                     required
                   />
                 </div>
@@ -206,24 +194,24 @@ const Login = () => {
                 transition={{ delay: 0.7 }}
                 className="space-y-2"
               >
-                <label htmlFor="password" className="text-sm font-medium text-gray-300">
+                <label htmlFor="password" className="text-sm font-medium text-foreground">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-foreground/60" />
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-12 pr-12 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#e94560] focus:border-transparent transition-all duration-300"
+                    className="w-full pl-12 pr-12 py-4 bg-white border border-blue-100 rounded-xl text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-300"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-foreground/60 hover:text-foreground transition-colors"
                     aria-label="Toggle password visibility"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -258,14 +246,14 @@ const Login = () => {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 text-[#e94560] bg-white/10 border-white/20 rounded focus:ring-[#e94560] focus:ring-2"
+                    className="w-4 h-4 text-blue-600 bg-white border-blue-200 rounded focus:ring-blue-400 focus:ring-2"
                   />
-                  <span className="ml-2 text-sm text-gray-300">Remember me</span>
+                  <span className="ml-2 text-sm text-foreground/80">Remember me</span>
                 </label>
                 <button
                   type="button"
                   onClick={() => navigate('/forgot-password')}
-                  className="text-sm text-[#e94560] hover:text-[#f8b400] transition-colors"
+                  className="text-sm text-blue-700 hover:opacity-80 transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -279,7 +267,7 @@ const Login = () => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-[#e94560] to-[#f8b400] hover:from-[#f8b400] hover:to-[#e94560] text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -306,7 +294,7 @@ const Login = () => {
                 type="button"
                 onClick={handleDemoLogin}
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-[#1fd1f9] to-[#b621fe] hover:from-[#b621fe] hover:to-[#1fd1f9] text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
               >
                 <Sparkles className="h-5 w-5" />
                 Try Demo Account
@@ -322,11 +310,11 @@ const Login = () => {
               transition={{ delay: 1.3 }}
               className="text-center mt-8"
             >
-              <span className="text-gray-400">Don't have an account? </span>
+              <span className="text-foreground/70">Don't have an account? </span>
               <button
                 type="button"
                 onClick={() => navigate('/register')}
-                className="text-[#e94560] hover:text-[#f8b400] font-semibold transition-colors"
+                className="text-blue-700 hover:opacity-80 font-semibold transition-colors"
               >
                 Create Account
               </button>
@@ -341,17 +329,17 @@ const Login = () => {
           transition={{ delay: 1.4 }}
           className="mt-8 grid grid-cols-3 gap-4 text-center"
         >
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-            <Globe className="h-6 w-6 text-[#e94560] mx-auto mb-2" />
-            <p className="text-white text-xs font-medium">120+ Countries</p>
+          <div className="box-lightblue rounded-2xl p-4">
+            <Globe className="h-6 w-6 text-blue-700 mx-auto mb-2" />
+            <p className="text-foreground text-xs font-medium">120+ Countries</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-            <Plane className="h-6 w-6 text-[#1fd1f9] mx-auto mb-2" />
-            <p className="text-white text-xs font-medium">AI Planning</p>
+          <div className="box-lightblue rounded-2xl p-4">
+            <Plane className="h-6 w-6 text-blue-700 mx-auto mb-2" />
+            <p className="text-foreground text-xs font-medium">AI Planning</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-            <Sparkles className="h-6 w-6 text-[#f8b400] mx-auto mb-2" />
-            <p className="text-white text-xs font-medium">Premium Support</p>
+          <div className="box-lightblue rounded-2xl p-4">
+            <Sparkles className="h-6 w-6 text-blue-700 mx-auto mb-2" />
+            <p className="text-foreground text-xs font-medium">Premium Support</p>
           </div>
         </motion.div>
       </motion.div>
@@ -385,7 +373,7 @@ const Login = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/')}
-                className="bg-gradient-to-r from-[#e94560] to-[#f8b400] text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
               >
                 Go to Dashboard
               </motion.button>

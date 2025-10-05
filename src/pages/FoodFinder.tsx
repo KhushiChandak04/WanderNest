@@ -40,7 +40,7 @@ const FoodFinder = () => {
               </div>
               <div className="p-4 w-full text-center">
                 <span className="font-bold text-lg">{food.name}</span>
-                <span className="block text-gray-300 mb-2">{food.type} - {food.city}</span>
+                <span className="block text-foreground/80 mb-2">{food.type} - {food.city}</span>
                 <a href={food.link} className="text-primary underline">View Restaurant</a>
               </div>
             </div>
