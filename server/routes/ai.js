@@ -4,23 +4,27 @@ const router = express.Router();
 
 // GET /api/ai/health
 router.get("/health", (req, res) => {
-  const apiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
-  res.json({ ok: true, hasKey: Boolean(apiKey) });
+  const groqKey = process.env.GROQ_API_KEY;
+  const xaiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
+  const provider = groqKey ? "groq" : (xaiKey ? "xai" : null);
+  res.json({ ok: true, provider, hasKey: Boolean(groqKey || xaiKey) });
 });
 
 // POST /api/ai/chat
 router.post("/chat", async (req, res) => {
   try {
-    const apiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
+    const groqKey = process.env.GROQ_API_KEY;
+    const xaiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
+    const provider = groqKey ? "groq" : (xaiKey ? "xai" : null);
     const demo = process.env.AI_DEMO_FALLBACK === 'true';
     const { messages = [], trip } = req.body || {};
 
     // If demo mode is enabled, allow responses even without an API key
-    if (!apiKey && demo) {
+    if (!provider && demo) {
       const fallback = buildFallbackReply(messages, trip);
       return res.json({ choices: [{ message: { content: fallback } }] });
     }
-    if (!apiKey) {
+    if (!provider) {
       const fallback = buildFallbackReply(messages, trip);
       return res.json({ choices: [{ message: { content: fallback } }], meta: { demo: true, reason: "missing_api_key" } });
     }
@@ -38,18 +42,27 @@ router.post("/chat", async (req, res) => {
       }
     ];
 
+    // Build payload compatible with OpenAI-style chat completions
+    const model = provider === 'groq'
+      ? (process.env.GROQ_MODEL || 'llama-3.1-70b-versatile')
+      : (process.env.XAI_MODEL || 'grok-4-latest');
     const payload = {
-      model: "grok-4-latest",
+      model,
       stream: false,
       temperature: 0.4,
       messages: [...systemPrompt, ...messages]
     };
 
-    const resp = await fetch("https://api.x.ai/v1/chat/completions", {
+    const endpoint = provider === 'groq'
+      ? 'https://api.groq.com/openai/v1/chat/completions'
+      : 'https://api.x.ai/v1/chat/completions';
+    const key = provider === 'groq' ? groqKey : xaiKey;
+
+    const resp = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`
+        Authorization: `Bearer ${key}`
       },
       body: JSON.stringify(payload)
     });
