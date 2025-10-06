@@ -18,11 +18,15 @@ import Footer from "./pages/Footer";
 const queryClient = new QueryClient();
 
 const RequireAuth = ({ children }: { children: JSX.Element }) => {
+  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true';
+  if (bypass) return children;
   const token = typeof window !== 'undefined' ? localStorage.getItem('wandernest_token') : null;
   return token ? children : <Navigate to="/login" replace />;
 };
 
 const RedirectIfAuthed = ({ children }: { children: JSX.Element }) => {
+  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true';
+  if (bypass) return children;
   const token = typeof window !== 'undefined' ? localStorage.getItem('wandernest_token') : null;
   return token ? <Navigate to="/" replace /> : children;
 };

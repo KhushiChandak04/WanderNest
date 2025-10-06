@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/health", (req, res) => {
   const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
   const groq = {
-    apiKeyPresent: Boolean(process.env.GROQ_API_KEY),
+    apiKeyPresent: Boolean(process.env.GROQ_API_KEY || process.env.GROQ_API_KEY_FILE || process.env.GROQ_TOKEN),
     model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile'
   };
   const xai = {
@@ -26,6 +26,11 @@ router.post("/chat", protect, async (req, res) => {
   try {
     const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
     const { messages = [], trip } = req.body || {};
+    // If explicitly in demo mode or demo fallback is requested, short-circuit
+    if (provider === 'demo' || String(process.env.AI_DEMO_FALLBACK).toLowerCase() === 'true') {
+      const content = buildFallbackReply(messages, trip);
+      return res.json({ choices: [{ message: { content } }], meta: { provider: 'demo', demo: true } });
+    }
 
     const systemPrompt = [
       { role: 'system', content: "You are WanderNest's expert Indian travel planner. Create concise, actionable travel answers and itineraries. Always use INR for costs and show practical visa notes (not legal advice). Be specific with neighborhoods/areas." },
@@ -47,7 +52,9 @@ router.post("/chat", protect, async (req, res) => {
             const fallback = await callOllama([...systemPrompt, ...messages]);
             return res.json({ ...fallback, meta: { provider: 'ollama', fallbackFrom: 'groq' } });
           } catch (e2) {
-            return res.status(403).json({ error: 'groq forbidden and local Ollama unavailable', details: toErr(e), fallbackError: toErr(e2) });
+            // As a last resort, return a demo reply rather than an error
+            const content = buildFallbackReply(messages, trip);
+            return res.json({ choices: [{ message: { content } }], meta: { provider: 'demo', demo: true, error: toErr(e), fallbackError: toErr(e2) } });
           }
         }
         throw e;
@@ -64,14 +71,23 @@ router.post("/chat", protect, async (req, res) => {
           const fallback = await callOllama([...systemPrompt, ...messages]);
           return res.json({ ...fallback, meta: { provider: 'ollama', fallbackFrom: 'xai' } });
         } catch (e2) {
-          return res.status(403).json({ error: 'x.ai forbidden and local Ollama unavailable', details: toErr(e), fallbackError: toErr(e2) });
+          // As a last resort, return a demo reply rather than an error
+          const content = buildFallbackReply(messages, trip);
+          return res.json({ choices: [{ message: { content } }], meta: { provider: 'demo', demo: true, error: toErr(e), fallbackError: toErr(e2) } });
         }
       }
       throw e;
     }
   } catch (err) {
     console.error("/api/ai/chat error", err);
-    return res.status(500).json({ error: "Unhandled server error", details: String(err?.message || err) });
+    // Return a demo/fallback reply instead of failing hard
+    try {
+      const { messages = [], trip } = req.body || {};
+      const content = buildFallbackReply(messages, trip);
+      return res.json({ choices: [{ message: { content } }], meta: { demo: true, provider: 'demo', error: String(err?.message || err) } });
+    } catch (e2) {
+      return res.status(500).json({ error: "Unhandled server error", details: String(err?.message || err) });
+    }
   }
 });
 
@@ -113,8 +129,9 @@ async function callXAI(messages) {
     err.status = 401;
     throw err;
   }
+  const model = process.env.XAI_MODEL || 'grok-2-latest';
   const payload = {
-    model: process.env.XAI_MODEL || 'grok-2-latest',
+    model,
     stream: false,
     temperature: 0.4,
     messages
@@ -131,7 +148,8 @@ async function callXAI(messages) {
     err.details = details;
     throw err;
   }
-  return await resp.json();
+  const data = await resp.json();
+  return { ...data, meta: { provider: 'xai', model } };
 }
 
 async function callOllama(messages) {
@@ -160,14 +178,22 @@ async function safeRead(resp) {
 }
 
 async function callGroq(messages) {
-  const apiKey = process.env.GROQ_API_KEY;
+  let apiKey = process.env.GROQ_API_KEY || process.env.GROQ_TOKEN;
+  // Optional: support docker/k8s style mounted secrets GROQ_API_KEY_FILE
+  if (!apiKey && process.env.GROQ_API_KEY_FILE) {
+    try {
+      const fs = await import('fs');
+      apiKey = fs.readFileSync(process.env.GROQ_API_KEY_FILE, 'utf8').trim();
+    } catch {}
+  }
   if (!apiKey) {
     const err = new Error('Missing GROQ_API_KEY');
     err.status = 401;
     throw err;
   }
+  const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
   const payload = {
-    model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+    model,
     stream: false,
     temperature: 0.4,
     messages
@@ -184,7 +210,8 @@ async function callGroq(messages) {
     err.details = details;
     throw err;
   }
-  return await resp.json();
+  const data = await resp.json();
+  return { ...data, meta: { provider: 'groq', model } };
 }
 
 export default router;

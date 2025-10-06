@@ -9,14 +9,15 @@ import authRoutes from "./routes/authRoutes.js";
 import aiRoutes from "./routes/ai.js";
 import "./polyfills/fetch.js";
 
-// Ensure we load server/.env even if process is started from project root
+// Ensure we load server/.env, and prefer server/.env.local for local overrides (both gitignored)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, ".env.local") });
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const app = express();
-// Debug (boolean only) to ensure key is detected; does not print secrets
-console.log("XAI key present:", Boolean(process.env.XAI_API_KEY || process.env.GROK_API_KEY));
+// Debug (boolean only) to ensure optional keys are detected; does not print secrets
+console.log("Groq key present:", Boolean(process.env.GROQ_API_KEY || process.env.GROQ_TOKEN || process.env.GROQ_API_KEY_FILE));
 
 // Global crash diagnostics
 process.on("uncaughtException", (err) => {
@@ -64,12 +65,8 @@ app.use("/api/auth", authRoutes);
 // AI proxy routes
 app.use("/api/ai", aiRoutes);
 
-// Start server without DB (prefer 5050 to avoid conflicts with other dev services)
-let desiredPort = Number(process.env.PORT) || 5050;
-if (Number(process.env.PORT) === 5000) {
-  console.warn("⚠️ PORT=5000 is busy in your environment. Starting on 5050 instead.");
-  desiredPort = 5050;
-}
+// Start server on 5002 by default (aligns with Vite proxy), with fallback on conflict
+let desiredPort = Number(process.env.PORT) || 5002;
 
 // Initialize Supabase (non-blocking)
 try { connectDB(); } catch {}

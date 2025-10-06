@@ -1,6 +1,12 @@
 import { supabase, connectDB } from "../config/db.js";
 
 export const protect = async (req, res, next) => {
+  // Development-only bypass: if BYPASS_AUTH=true, skip checks
+  if (String(process.env.BYPASS_AUTH).toLowerCase() === 'true') {
+    req.user = req.user || { id: 'dev-user', name: 'Dev Bypass', email: 'dev@local' };
+    return next();
+  }
+
   let token;
 
   // Expect "Authorization: Bearer <token>"

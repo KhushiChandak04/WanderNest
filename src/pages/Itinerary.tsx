@@ -25,6 +25,8 @@ const Itinerary = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const exportRef = useRef<HTMLDivElement>(null);
   const [tripId, setTripId] = useState<string | null>(null);
+  const [originIATA, setOriginIATA] = useState<string>("DEL");
+  const [providerLabel, setProviderLabel] = useState<string>("groq");
 
   const tripSummary = useMemo(() => {
     const parts = [
@@ -36,13 +38,21 @@ const Itinerary = () => {
     return parts.join(" | ");
   }, [trip]);
 
+  function titleCase(s?: string) {
+    if (!s) return s;
+    return s
+      .split(/\s+/)
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+  }
+
   useEffect(() => {
     // seed assistant with a context-aware greeting
     const greet: ChatMessage = {
       role: "assistant",
       content:
         trip.destination
-          ? `I’ve loaded your trip context. Let’s plan ${trip.destination}! Ask for a day-by-day plan, budget in INR, food suggestions, or visa tips.`
+          ? `I’ve loaded your trip context. Let’s plan ${titleCase(trip.destination)}! Ask for a day-by-day plan, budget in INR, food suggestions, or visa tips.`
           : `Tell me your destination and preferences. I’ll build a day-by-day plan, budget in INR, food suggestions, and visa tips.`,
     };
     setMessages([greet]);
@@ -136,6 +146,8 @@ const Itinerary = () => {
       const resp = await aiChatWithRetry(newMsgs.filter(m => m.role !== "assistant" || m.content.length < 4000), trip);
       const ai = resp?.choices?.[0]?.message?.content || resp?.choices?.[0]?.delta?.content || "Sorry, I couldn't generate a response.";
       const isFallback = resp?.meta?.demo === true;
+      const provider = resp?.meta?.provider || "groq";
+      setProviderLabel(isFallback ? "demo" : provider);
       const additions: ChatMessage[] = [{ role: "assistant", content: ai }];
       if (isFallback) {
         additions.push({
@@ -148,7 +160,7 @@ const Itinerary = () => {
       try {
         if (tripId && ai) {
           const summary = tripSummary || undefined;
-          await saveItineraryForTrip({ trip_id: tripId, content: ai, summary, model: 'groq' });
+          await saveItineraryForTrip({ trip_id: tripId, content: ai, summary, model: provider });
         }
       } catch {}
     } catch (e: any) {
@@ -167,6 +179,102 @@ const Itinerary = () => {
     } finally {
       setLoading(false);
     }
+  }
+
+  // ---- Flights helpers ----
+  function toISO(d?: string) {
+    if (!d) return undefined;
+    const dt = new Date(d);
+    if (isNaN(dt.getTime())) return undefined;
+    return dt.toISOString().slice(0, 10);
+  }
+
+  const iataCityMap: Record<string, string> = {
+    // Common city codes
+    "new york": "NYC",
+    "nyc": "NYC",
+    "paris": "PAR",
+    "london": "LON",
+    "tokyo": "TYO",
+    "dubai": "DXB",
+    "singapore": "SIN",
+    "bangkok": "BKK",
+    "sydney": "SYD",
+    "san francisco": "SFO",
+    "los angeles": "LAX",
+    "mumbai": "BOM",
+    "delhi": "DEL",
+    "bengaluru": "BLR",
+    "bengalore": "BLR",
+    "chennai": "MAA",
+  };
+
+  function guessDestIATA(dest?: string) {
+    if (!dest) return undefined;
+    const key = dest.toLowerCase();
+    for (const k of Object.keys(iataCityMap)) {
+      if (key.includes(k)) return iataCityMap[k];
+    }
+    return undefined;
+  }
+
+  function buildGoogleFlightsLink(origin?: string, destination?: string, depart?: string, ret?: string) {
+    if (!destination) return undefined;
+    const o = (origin || "").toUpperCase().trim();
+    const cityCode = guessDestIATA(destination);
+    const dISO = toISO(depart);
+    const rISO = toISO(ret);
+    if (o && cityCode && dISO && rISO) {
+      // Deep link using city codes and dates
+      // Example: https://www.google.com/travel/flights?hl=en#flt=DEL.PAR.2025-10-22*PAR.DEL.2025-10-29
+      const flt = `${o}.${cityCode}.${dISO}*${cityCode}.${o}.${rISO}`;
+      return `https://www.google.com/travel/flights?hl=en#flt=${encodeURIComponent(flt)}`;
+    }
+    // Fallback to query-based search
+    const q = [o ? `from ${o}` : "", "to", destination, dISO ? `on ${dISO}` : "", rISO ? `return ${rISO}` : ""].filter(Boolean).join(" ");
+    return `https://www.google.com/travel/flights?hl=en&q=${encodeURIComponent(q)}`;
+  }
+
+  function airlineLinksForDestination(destination?: string) {
+    const list: { name: string; url: string }[] = [];
+    if (!destination) return list;
+    const d = destination.toLowerCase();
+    const push = (name: string, url: string) => list.push({ name, url });
+    // General international carriers popular from India
+    push("Air India", "https://www.airindia.com/");
+    push("IndiGo", "https://www.goindigo.in/");
+    push("Vistara", "https://www.airvistara.com/");
+    push("Emirates", "https://www.emirates.com/");
+    push("Qatar Airways", "https://www.qatarairways.com/");
+    push("Singapore Airlines", "https://www.singaporeair.com/");
+
+    // Destination-specific majors
+    if (d.includes("new york") || d.includes("nyc")) {
+      push("United Airlines", "https://www.united.com/");
+      push("Delta Air Lines", "https://www.delta.com/");
+      push("American Airlines", "https://www.aa.com/");
+      push("Air India (Nonstop DEL/EWR)", "https://www.airindia.com/");
+    }
+    if (d.includes("tokyo")) {
+      push("ANA (All Nippon Airways)", "https://www.ana.co.jp/");
+      push("Japan Airlines", "https://www.jal.co.jp/");
+    }
+    if (d.includes("paris")) {
+      push("Air France", "https://www.airfrance.com/");
+    }
+    if (d.includes("london")) {
+      push("British Airways", "https://www.britishairways.com/");
+      push("Virgin Atlantic", "https://www.virginatlantic.com/");
+    }
+    if (d.includes("dubai")) {
+      push("Emirates", "https://www.emirates.com/");
+      push("flydubai", "https://www.flydubai.com/");
+    }
+    if (d.includes("singapore")) {
+      push("Singapore Airlines", "https://www.singaporeair.com/");
+      push("Scoot", "https://www.flyscoot.com/");
+    }
+    return list;
   }
 
   return (
@@ -197,6 +305,42 @@ const Itinerary = () => {
                 ))}
               </div>
             </div>
+
+            {/* Flights helper */}
+            <div className="mt-6 pt-5 border-t border-blue-100">
+              <h3 className="font-semibold mb-2">Flights</h3>
+              <label className="block text-xs text-foreground/70 mb-1">Origin (IATA code)</label>
+              <input
+                value={originIATA}
+                onChange={(e) => setOriginIATA(e.target.value.toUpperCase())}
+                placeholder="DEL, BOM, BLR…"
+                className="w-full bg-white border border-blue-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+              />
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                {trip.destination ? (
+                  <a
+                    href={buildGoogleFlightsLink(originIATA, trip.destination, trip.startDate, trip.endDate)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 text-sm"
+                  >Search on Google Flights</a>
+                ) : (
+                  <div className="text-xs text-foreground/70">Set destination to enable flight search</div>
+                )}
+              </div>
+              {trip.destination && (
+                <div className="mt-3">
+                  <div className="text-xs text-foreground/70 mb-1">Official airline sites</div>
+                  <div className="flex flex-wrap gap-2">
+                    {airlineLinksForDestination(trip.destination).map((a) => (
+                      <a key={a.name} href={a.url} target="_blank" rel="noreferrer" className="px-2 py-1 rounded-md bg-white border border-blue-100 text-xs hover:bg-blue-50">
+                        {a.name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Chat panel */}
@@ -211,7 +355,9 @@ const Itinerary = () => {
               ))}
               {loading && <div className="text-sm text-foreground/70">Thinking…</div>}
             </div>
-            <div className="p-4 border-t border-blue-100 flex gap-2">
+            <div className="p-4 border-t border-blue-100 flex flex-col gap-2">
+              <div className="text-xs text-foreground/60">AI provider: <span className="font-medium">{providerLabel}</span></div>
+              <div className="flex gap-2">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -229,6 +375,7 @@ const Itinerary = () => {
                 className="px-5 py-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-100"
                 title="Download latest itinerary as PDF"
               >Download PDF</button>
+              </div>
             </div>
           </div>
         </div>
