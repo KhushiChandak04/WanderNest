@@ -194,8 +194,10 @@ const Itinerary = () => {
     "new york": "NYC",
     "nyc": "NYC",
     "paris": "PAR",
+    "france": "PAR",
     "london": "LON",
     "tokyo": "TYO",
+    "japan": "TYO",
     "dubai": "DXB",
     "singapore": "SIN",
     "bangkok": "BKK",
@@ -207,6 +209,12 @@ const Itinerary = () => {
     "bengaluru": "BLR",
     "bengalore": "BLR",
     "chennai": "MAA",
+    // Country/region fallbacks
+    "italy": "ROM",
+    "spain": "MAD",
+    "germany": "BER",
+    "norway": "OSL",
+    "bali": "DPS",
   };
 
   function guessDestIATA(dest?: string) {
@@ -228,6 +236,11 @@ const Itinerary = () => {
       // Deep link using city codes and dates
       // Example: https://www.google.com/travel/flights?hl=en#flt=DEL.PAR.2025-10-22*PAR.DEL.2025-10-29
       const flt = `${o}.${cityCode}.${dISO}*${cityCode}.${o}.${rISO}`;
+      return `https://www.google.com/travel/flights?hl=en#flt=${encodeURIComponent(flt)}`;
+    }
+    if (o && cityCode && dISO) {
+      // One-way deep link if return date not provided
+      const flt = `${o}.${cityCode}.${dISO}`;
       return `https://www.google.com/travel/flights?hl=en#flt=${encodeURIComponent(flt)}`;
     }
     // Fallback to query-based search

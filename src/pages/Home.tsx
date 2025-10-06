@@ -19,7 +19,7 @@ const destinations = [
   { name: "Japan", flag: "🇯🇵", costINR: 150000, icon: "🗻", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&h=600&fit=crop" },
   { name: "Italy", flag: "🇮🇹", costINR: 180000, icon: "🍕", image: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop" },
   { name: "India", flag: "🇮🇳", costINR: 100000, icon: "🕌", image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&h=600&fit=crop" },
-  { name: "France", flag: "🇫🇷", costINR: 170000, icon: "🗼", image: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&h=600&fit=crop" },
+  { name: "France", flag: "🇫🇷", costINR: 170000, icon: "🗼", image: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?w=800&h=600&fit=crop" },
   { name: "Bali", flag: "🇮🇩", costINR: 120000, icon: "🏝️", image: "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=800&h=600&fit=crop" },
   { name: "Norway", flag: "🇳🇴", costINR: 200000, icon: "🏔️", image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop" }
 ];

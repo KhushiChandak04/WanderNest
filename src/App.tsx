@@ -14,6 +14,7 @@ import VisaGuide from "./pages/VisaGuide";
 import FoodFinder from "./pages/FoodFinder";
 import Navbar from "./pages/Navbar";
 import Footer from "./pages/Footer";
+import ScrollUpArrow from "./components/ScrollUpArrow";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ function App(): JSX.Element {
           <BrowserRouter>
             <ScrollToTop />
             <Navbar />
+            <ScrollUpArrow />
             <Routes>
               {/* Public routes */}
               <Route path="/login" element={<RedirectIfAuthed><Login /></RedirectIfAuthed>} />
