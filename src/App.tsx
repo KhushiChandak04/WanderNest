@@ -19,14 +19,17 @@ import ScrollUpArrow from "./components/ScrollUpArrow";
 const queryClient = new QueryClient();
 
 const RequireAuth = ({ children }: { children: JSX.Element }) => {
-  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true';
+  // Demo bypass: allow access if explicitly enabled or when hosted on Vercel domains
+  const isVercelHost = typeof window !== 'undefined' && /\.vercel\.app$/.test(window.location.hostname);
+  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || isVercelHost;
   if (bypass) return children;
   const token = typeof window !== 'undefined' ? localStorage.getItem('wandernest_token') : null;
   return token ? children : <Navigate to="/login" replace />;
 };
 
 const RedirectIfAuthed = ({ children }: { children: JSX.Element }) => {
-  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true';
+  const isVercelHost = typeof window !== 'undefined' && /\.vercel\.app$/.test(window.location.hostname);
+  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || isVercelHost;
   if (bypass) return children;
   const token = typeof window !== 'undefined' ? localStorage.getItem('wandernest_token') : null;
   return token ? <Navigate to="/" replace /> : children;
@@ -65,11 +68,14 @@ function App(): JSX.Element {
               <Route path="/itinerary" element={<RequireAuth><Itinerary /></RequireAuth>} />
               {/* Food Finder removed as requested */}
 
-              {/* Catch-all -> if authed, show 404; else redirect to login */}
+              {/* Catch-all -> if authed or in demo bypass, show 404; else redirect to login */}
               <Route path="*" element={
-                typeof window !== 'undefined' && localStorage.getItem('wandernest_token')
-                  ? <NotFound />
-                  : <Navigate to="/login" replace />
+                (() => {
+                  const isVercelHost = typeof window !== 'undefined' && /\.vercel\.app$/.test(window.location.hostname);
+                  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || isVercelHost;
+                  const authed = typeof window !== 'undefined' && Boolean(localStorage.getItem('wandernest_token'));
+                  return (authed || bypass) ? <NotFound /> : <Navigate to="/login" replace />;
+                })()
               } />
             </Routes>
             <Footer />

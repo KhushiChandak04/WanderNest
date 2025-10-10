@@ -67,8 +67,7 @@ const testimonials = [
 const stats = [
   { number: "50K+", label: "Happy Travelers", icon: "✈️" },
   { number: "120+", label: "Countries Covered", icon: "🌍" },
-  { number: "1M+", label: "Trips Planned", icon: "📋" },
-  { number: "98%", label: "Success Rate", icon: "⭐" }
+  { number: "1M+", label: "Trips Planned", icon: "📋" }
 ];
 
 const Home = () => {
