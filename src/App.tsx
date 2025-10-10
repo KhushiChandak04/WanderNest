@@ -19,9 +19,11 @@ import ScrollUpArrow from "./components/ScrollUpArrow";
 const queryClient = new QueryClient();
 
 const RequireAuth = ({ children }: { children: JSX.Element }) => {
-  // Demo bypass: allow access if explicitly enabled or when hosted on Vercel domains
+  // Demo bypass: allow access in demo mode on Vercel unless explicitly disabled
   const isVercelHost = typeof window !== 'undefined' && /\.vercel\.app$/.test(window.location.hostname);
-  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || isVercelHost;
+  const useBackend = (import.meta as any).env?.VITE_USE_BACKEND === 'true';
+  const demoMode = (import.meta as any).env?.VITE_DEMO_MODE !== 'false';
+  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || (isVercelHost && demoMode && !useBackend);
   if (bypass) return children;
   const token = typeof window !== 'undefined' ? localStorage.getItem('wandernest_token') : null;
   return token ? children : <Navigate to="/login" replace />;
@@ -29,7 +31,9 @@ const RequireAuth = ({ children }: { children: JSX.Element }) => {
 
 const RedirectIfAuthed = ({ children }: { children: JSX.Element }) => {
   const isVercelHost = typeof window !== 'undefined' && /\.vercel\.app$/.test(window.location.hostname);
-  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || isVercelHost;
+  const useBackend = (import.meta as any).env?.VITE_USE_BACKEND === 'true';
+  const demoMode = (import.meta as any).env?.VITE_DEMO_MODE !== 'false';
+  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || (isVercelHost && demoMode && !useBackend);
   if (bypass) return children;
   const token = typeof window !== 'undefined' ? localStorage.getItem('wandernest_token') : null;
   return token ? <Navigate to="/" replace /> : children;
@@ -72,7 +76,9 @@ function App(): JSX.Element {
               <Route path="*" element={
                 (() => {
                   const isVercelHost = typeof window !== 'undefined' && /\.vercel\.app$/.test(window.location.hostname);
-                  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || isVercelHost;
+                  const useBackend = (import.meta as any).env?.VITE_USE_BACKEND === 'true';
+                  const demoMode = (import.meta as any).env?.VITE_DEMO_MODE !== 'false';
+                  const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || (isVercelHost && demoMode && !useBackend);
                   const authed = typeof window !== 'undefined' && Boolean(localStorage.getItem('wandernest_token'));
                   return (authed || bypass) ? <NotFound /> : <Navigate to="/login" replace />;
                 })()

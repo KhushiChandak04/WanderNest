@@ -1,4 +1,4 @@
-import API from "./api";
+import API, { IS_DEMO_API } from "./api";
 
 export type ChatMessage = {
   role: "system" | "user" | "assistant";
@@ -16,8 +16,8 @@ export type TripContext = {
 
 
 export async function aiChat(messages: ChatMessage[], trip?: TripContext) {
-  // Demo bypass: return canned AI response if API is stubbed
-  if ((API.get && API.post && API.put && API.delete) && typeof window !== 'undefined' && (/\.vercel\.app$/.test(window.location.hostname) || (import.meta as any).env?.VITE_BYPASS_AUTH === 'true')) {
+  // Demo bypass: return canned AI response if we are in client demo mode
+  if (IS_DEMO_API) {
     return {
       choices: [{ message: { role: "assistant", content: "(Demo) Here is a sample AI-generated itinerary. Please imagine your trip details here!" } }],
       demo: true

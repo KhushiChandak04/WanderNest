@@ -39,13 +39,26 @@ process.on("exit", (code) => {
 });
 
 // Core middleware
+// CORS: allow local dev + configured origins + Vercel deployments
+const staticAllowed = [
+  "http://localhost:8080",
+  "http://127.0.0.1:8080",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+];
+const extraAllowed = (process.env.APP_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
 app.use(cors({
-  origin: [
-    "http://localhost:8080",
-    "http://127.0.0.1:8080",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-  ],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow non-browser clients
+    try {
+      const allowed = [...staticAllowed, ...extraAllowed];
+      const isAllowed =
+        allowed.includes(origin) ||
+        /\.vercel\.app$/.test(new URL(origin).hostname);
+      if (isAllowed) return callback(null, true);
+    } catch {}
+    return callback(new Error(`CORS blocked for origin ${origin}`));
+  },
   credentials: true,
 }));
 app.use(express.json());

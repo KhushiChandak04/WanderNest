@@ -21,8 +21,11 @@ router.get("/health", (req, res) => {
   res.json({ ok: true, provider, groq, xai, ollama });
 });
 
+// Optional public access to AI: if AI_PUBLIC=true, skip auth; otherwise require protect
+const maybeProtect = String(process.env.AI_PUBLIC).toLowerCase() === 'true' ? (_req, _res, next) => next() : protect;
+
 // POST /api/ai/chat
-router.post("/chat", protect, async (req, res) => {
+router.post("/chat", maybeProtect, async (req, res) => {
   try {
     const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
     const { messages = [], trip } = req.body || {};

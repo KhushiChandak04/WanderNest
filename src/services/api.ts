@@ -1,22 +1,33 @@
 import axios, { AxiosHeaders } from "axios";
 
 
-// Demo bypass: stub API for Vercel or VITE_BYPASS_AUTH
+// Decide if we are in demo (stub) mode or real backend mode
 const isVercelHost = typeof window !== 'undefined' && /\.vercel\.app$/.test(window.location.hostname);
-const bypass = (import.meta as any).env?.VITE_BYPASS_AUTH === 'true' || isVercelHost;
+const VITE_API_URL = (import.meta as any).env?.VITE_API_URL as string | undefined;
+const VITE_USE_BACKEND = (import.meta as any).env?.VITE_USE_BACKEND as string | undefined;
+const VITE_DEMO_MODE = (import.meta as any).env?.VITE_DEMO_MODE as string | undefined;
+
+// Demo if: on Vercel AND not explicitly disabled AND not forced to use backend AND no API URL configured
+export const IS_DEMO_API = Boolean(
+  isVercelHost &&
+  VITE_USE_BACKEND !== 'true' &&
+  VITE_DEMO_MODE !== 'false' &&
+  !VITE_API_URL
+);
 
 let API: any;
-if (bypass) {
-  // Stub API: always resolve with empty or demo data
+if (IS_DEMO_API) {
+  // Stub API: resolve with empty or demo data to keep UI functional
   API = {
-    get: async (url: string) => ({ data: {} }),
-    post: async (url: string, body?: any) => ({ data: {} }),
-    put: async (url: string, body?: any) => ({ data: {} }),
-    delete: async (url: string) => ({ data: {} }),
+    get: async (_url: string) => ({ data: {} }),
+    post: async (_url: string, _body?: any) => ({ data: {} }),
+    put: async (_url: string, _body?: any) => ({ data: {} }),
+    delete: async (_url: string) => ({ data: {} }),
   };
 } else {
   API = axios.create({
-    baseURL: (import.meta as any).env?.VITE_API_URL ? `${(import.meta as any).env.VITE_API_URL}/api` : "/api",
+    // If VITE_API_URL is set, we assume the backend is deployed at that host
+    baseURL: VITE_API_URL ? `${VITE_API_URL.replace(/\/$/, '')}/api` : "/api",
     withCredentials: false,
   });
   API.interceptors.request.use((config: any) => {

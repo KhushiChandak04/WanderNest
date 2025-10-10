@@ -1,4 +1,4 @@
-import API from "./api";
+import API, { IS_DEMO_API } from "./api";
 
 export type TripPayload = {
   destination: string;
@@ -10,8 +10,8 @@ export type TripPayload = {
 
 
 export async function createTrip(trip: TripPayload) {
-  // Demo bypass: return canned trip if API is stubbed
-  if ((API.get && API.post && API.put && API.delete) && typeof window !== 'undefined' && (/\.vercel\.app$/.test(window.location.hostname) || (import.meta as any).env?.VITE_BYPASS_AUTH === 'true')) {
+  // Demo bypass: return canned trip if in client demo mode
+  if (IS_DEMO_API) {
     return { id: "demo-trip-id" };
   }
   const { data } = await API.post("/trips", trip);
@@ -19,7 +19,7 @@ export async function createTrip(trip: TripPayload) {
 }
 
 export async function listTrips() {
-  if ((API.get && API.post && API.put && API.delete) && typeof window !== 'undefined' && (/\.vercel\.app$/.test(window.location.hostname) || (import.meta as any).env?.VITE_BYPASS_AUTH === 'true')) {
+  if (IS_DEMO_API) {
     return [{ id: "demo-trip-id", destination: "Demo Destination", start_date: "2025-10-10", return_date: "2025-10-15" }];
   }
   const { data } = await API.get("/trips");
@@ -27,7 +27,7 @@ export async function listTrips() {
 }
 
 export async function saveItineraryForTrip(params: { trip_id: string; content: any; summary?: string; model?: string }) {
-  if ((API.get && API.post && API.put && API.delete) && typeof window !== 'undefined' && (/\.vercel\.app$/.test(window.location.hostname) || (import.meta as any).env?.VITE_BYPASS_AUTH === 'true')) {
+  if (IS_DEMO_API) {
     return { id: "demo-itinerary-id", summary: "Demo itinerary summary.", content: params.content };
   }
   const { data } = await API.post("/itineraries", params);
@@ -35,7 +35,7 @@ export async function saveItineraryForTrip(params: { trip_id: string; content: a
 }
 
 export async function listItineraries() {
-  if ((API.get && API.post && API.put && API.delete) && typeof window !== 'undefined' && (/\.vercel\.app$/.test(window.location.hostname) || (import.meta as any).env?.VITE_BYPASS_AUTH === 'true')) {
+  if (IS_DEMO_API) {
     return [{ id: "demo-itinerary-id", summary: "Demo itinerary summary.", content: "Demo itinerary content." }];
   }
   const { data } = await API.get("/itineraries");
