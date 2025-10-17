@@ -7,12 +7,24 @@ const VITE_API_URL = (import.meta as any).env?.VITE_API_URL as string | undefine
 const VITE_USE_BACKEND = (import.meta as any).env?.VITE_USE_BACKEND as string | undefined;
 const VITE_DEMO_MODE = (import.meta as any).env?.VITE_DEMO_MODE as string | undefined;
 
-// Demo if: on Vercel AND not explicitly disabled AND not forced to use backend AND no API URL configured
+// Runtime overrides from localStorage (so you can enable Live AI without redeploying)
+let LS_API_URL: string | undefined;
+let LS_USE_BACKEND: string | undefined;
+try {
+  if (typeof window !== 'undefined') {
+    LS_API_URL = localStorage.getItem('wandernest_api_url') || undefined;
+    LS_USE_BACKEND = localStorage.getItem('wandernest_use_backend') || undefined;
+  }
+} catch {}
+
+const useBackend = (VITE_USE_BACKEND === 'true') || (LS_USE_BACKEND === 'true');
+const API_BASE = (LS_API_URL || VITE_API_URL);
+
+// Demo if: on Vercel AND not explicitly disabled AND no runtime backend override AND not forced to use backend
 export const IS_DEMO_API = Boolean(
   isVercelHost &&
-  VITE_USE_BACKEND !== 'true' &&
   VITE_DEMO_MODE !== 'false' &&
-  !VITE_API_URL
+  !(useBackend && API_BASE)
 );
 
 let API: any;
@@ -26,8 +38,8 @@ if (IS_DEMO_API) {
   };
 } else {
   API = axios.create({
-    // If VITE_API_URL is set, we assume the backend is deployed at that host
-    baseURL: VITE_API_URL ? `${VITE_API_URL.replace(/\/$/, '')}/api` : "/api",
+    // Prefer runtime override, else env URL, else relative /api
+    baseURL: API_BASE ? `${API_BASE.replace(/\/$/, '')}/api` : "/api",
     withCredentials: false,
   });
   API.interceptors.request.use((config: any) => {

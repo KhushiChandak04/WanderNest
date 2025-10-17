@@ -27,16 +27,27 @@ const Itinerary = () => {
   const [tripId, setTripId] = useState<string | null>(null);
   const [originIATA, setOriginIATA] = useState<string>("DEL");
   const [providerLabel, setProviderLabel] = useState<string>("groq");
+  const [autoPlanned, setAutoPlanned] = useState<boolean>(false);
+
+  // Calculate number of travel days
+  const travelDays = useMemo(() => {
+    if (!trip.startDate || !trip.endDate) return 0;
+    const start = new Date(trip.startDate);
+    const end = new Date(trip.endDate);
+    const diff = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff + 1 : 1;
+  }, [trip.startDate, trip.endDate]);
 
   const tripSummary = useMemo(() => {
     const parts = [
       trip.destination ? `Destination: ${trip.destination}` : undefined,
       trip.startDate || trip.endDate ? `Dates: ${trip.startDate || "Not set"} - ${trip.endDate || "Not set"}` : undefined,
+      travelDays ? `Travel Days: ${travelDays}` : undefined,
       trip.budgetINR ? `Budget: ${formatINR(trip.budgetINR)} (${trip.currency || "INR"})` : undefined,
       trip.notes ? `Notes: ${trip.notes}` : undefined,
     ].filter(Boolean);
     return parts.join(" | ");
-  }, [trip]);
+  }, [trip, travelDays]);
 
   function titleCase(s?: string) {
     if (!s) return s;
@@ -47,15 +58,16 @@ const Itinerary = () => {
   }
 
   useEffect(() => {
-    // seed assistant with a context-aware greeting
-    const greet: ChatMessage = {
-      role: "assistant",
-      content:
-        trip.destination
-          ? `I’ve loaded your trip context. Let’s plan ${titleCase(trip.destination)}! Ask for a day-by-day plan, budget in INR, food suggestions, or visa tips.`
-          : `Tell me your destination and preferences. I’ll build a day-by-day plan, budget in INR, food suggestions, and visa tips.`,
-    };
-    setMessages([greet]);
+    // seed assistant with a context-aware greeting and auto day-by-day prompt
+    let greeting = trip.destination
+      ? `I’ve loaded your trip context. Let’s plan ${titleCase(trip.destination)}! You are travelling for ${travelDays} day${travelDays > 1 ? 's' : ''}. Here is a custom day-by-day itinerary, budget in INR, food suggestions, and visa tips.`
+      : `Tell me your destination and preferences. I’ll build a day-by-day plan, budget in INR, food suggestions, and visa tips.`;
+    // If travelDays > 1, auto-prompt for a day-by-day plan
+    if (trip.destination && travelDays > 1) {
+      greeting += `\n\nPlease generate a ${travelDays}-day itinerary for ${titleCase(trip.destination)}.`;
+    }
+    const greet: ChatMessage = { role: "assistant", content: greeting };
+  setMessages([greet]);
     // Create a trip request record if we have basic context and a token
     (async () => {
       try {
@@ -71,7 +83,21 @@ const Itinerary = () => {
         }
       } catch {}
     })();
-  }, []);
+
+    // Auto-send a day-by-day itinerary prompt when we have destination and dates
+    if (trip.destination && travelDays > 0 && !autoPlanned) {
+      const planPrompt = [
+        `Generate a detailed ${travelDays}-day itinerary for ${titleCase(trip.destination)} between ${trip.startDate || 'start'} and ${trip.endDate || 'end'}.`,
+        `Include a daily schedule (morning/afternoon/evening), realistic budgets in INR, and transport guidance.`,
+        `Highlight vegetarian/halal-friendly food near key sights, and add visa tips for Indian travelers where relevant.`,
+        trip.notes ? `Traveler notes: ${trip.notes}` : undefined,
+        typeof trip.budgetINR === 'number' ? `Overall budget: ₹${Number(trip.budgetINR).toLocaleString('en-IN')}` : undefined
+      ].filter(Boolean).join('\n');
+      // Allow state to settle so the greeting renders before AI response
+      setAutoPlanned(true);
+      setTimeout(() => { send(planPrompt); }, 120);
+    }
+  }, [travelDays]);
 
   useEffect(() => {
     // auto-scroll chat to bottom on new message
@@ -84,20 +110,25 @@ const Itinerary = () => {
       const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
       let node: HTMLElement | null = null;
       if (lastAssistant) {
-        // Create a temporary hidden container with clean content
+        // Create a temporary hidden container with beautiful background and color styling
         const temp = document.createElement('div');
         temp.style.position = 'fixed';
         temp.style.left = '-99999px';
         temp.style.top = '0';
         temp.style.width = '794px'; // A4 width at ~96dpi
-        temp.style.padding = '24px';
-        temp.style.background = '#ffffff';
-        temp.style.color = '#111827';
-        temp.style.fontFamily = 'ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial';
+        temp.style.padding = '32px';
+        temp.style.background = 'linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%)';
+        temp.style.borderRadius = '24px';
+        temp.style.color = '#1e293b';
+        temp.style.fontFamily = 'Inter, Playfair Display, ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial';
         temp.innerHTML = `
-          <h1 style="margin:0 0 8px 0;font-size:22px;">Custom Itinerary${trip.destination ? ` – ${trip.destination}` : ''}</h1>
-          <div style="font-size:12px;color:#374151;margin-bottom:12px;">${tripSummary || ''}</div>
-          <pre style="white-space:pre-wrap;line-height:1.5;font-size:13px;margin:0;">${lastAssistant.content.replace(/</g, '&lt;')}</pre>
+          <div style="background: linear-gradient(120deg, #38bdf8 0%, #818cf8 100%); border-radius: 18px; padding: 18px 24px; color: #fff; margin-bottom: 18px; box-shadow: 0 4px 24px rgba(56,189,248,0.12);">
+            <h1 style="margin:0 0 8px 0;font-size:28px;font-family:'Playfair Display',serif;letter-spacing:1px;">Custom Itinerary${trip.destination ? ` – ${titleCase(trip.destination)}` : ''}</h1>
+            <div style="font-size:14px;color:#e0e7ff;margin-bottom:8px;">${tripSummary || ''}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.95);border-radius:16px;padding:18px 24px;box-shadow:0 2px 12px rgba(56,189,248,0.08);">
+            <pre style="white-space:pre-wrap;line-height:1.7;font-size:15px;margin:0;color:#334155;font-family:'Inter',sans-serif;">${lastAssistant.content.replace(/</g, '&lt;')}</pre>
+          </div>
         `;
         document.body.appendChild(temp);
         node = temp;
@@ -106,15 +137,15 @@ const Itinerary = () => {
       }
       if (!node) return;
 
-  // Use the explicit UMD bundle path so Vite can resolve it reliably
-  const mod = await import('html2pdf.js/dist/html2pdf.bundle.min.js');
-  const html2pdf = (mod as any).default || (mod as any);
+      // Use the explicit UMD bundle path so Vite can resolve it reliably
+      const mod = await import('html2pdf.js/dist/html2pdf.bundle.min.js');
+      const html2pdf = (mod as any).default || (mod as any);
       const fileName = `Itinerary${trip.destination ? '-' + trip.destination.replace(/\s+/g,'_') : ''}.pdf`;
       await html2pdf().from(node).set({
-        margin: 10,
+        margin: 0,
         filename: fileName,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: null },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       }).save();
 

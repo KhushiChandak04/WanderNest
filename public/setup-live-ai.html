@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WanderNest Live AI Setup</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; color: #0f172a; }
+      label { display:block; margin: 12px 0 6px; }
+      input { width: 100%; max-width: 640px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; }
+      button { margin-top: 16px; background: #2563eb; color: #fff; border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; }
+      .note { color: #475569; font-size: 14px; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>Enable Live AI on this deployment</h1>
+    <p>Set your Backend API URL at runtime (no redeploy required). This stores a value in your browser’s localStorage.</p>
+    <label for="api">Backend API URL (e.g., https://api.example.com)</label>
+    <input id="api" placeholder="https://your-api-host" />
+    <div class="note">Must serve /api/ai/health and /api/ai/chat.</div>
+
+    <div style="margin-top:12px;">
+      <label><input type="checkbox" id="use" /> Use backend (disable demo mode)</label>
+    </div>
+    <button id="save">Save</button>
+    <div id="status" class="note"></div>
+
+    <script>
+      const api = document.getElementById('api');
+      const use = document.getElementById('use');
+      const status = document.getElementById('status');
+      try {
+        api.value = localStorage.getItem('wandernest_api_url') || '';
+        use.checked = (localStorage.getItem('wandernest_use_backend') || 'false') === 'true';
+      } catch {}
+      document.getElementById('save').onclick = () => {
+        try {
+          const url = api.value.trim();
+          if (url) localStorage.setItem('wandernest_api_url', url);
+          else localStorage.removeItem('wandernest_api_url');
+          localStorage.setItem('wandernest_use_backend', use.checked ? 'true' : 'false');
+          status.textContent = 'Saved. Refresh your app to apply (Ctrl/Cmd+R).';
+        } catch (e) {
+          status.textContent = 'Could not save to localStorage: ' + (e.message || e);
+        }
+      };
+    </script>
+  </body>
+  </html>
